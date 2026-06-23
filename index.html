@@ -578,11 +578,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .mech-mobile.mm-swap .cell{opacity:0;transform:translateY(6px)}
   .mech-mobile.mm-swap .mm-chip{opacity:0}
   .mech-mobile .mm-chip{transition:opacity .4s ease,color .45s ease,background-color .45s ease,border-color .45s ease}
+  .mech-mobile .mm-chip{font-family:var(--mono);font-size:.74rem;color:var(--neutral);background:var(--neutral-soft);
+    border:1px solid var(--line-2);border-radius:999px;padding:.28rem .8rem}
   .mech-mobile .mm-chip.k-ok{color:var(--proof);background:var(--proof-soft);border-color:rgba(31,122,85,.3)}
+  .mech-mobile .mm-chip.k-warn{color:var(--amber);background:var(--amber-soft);border-color:rgba(200,134,30,.3)}
   .mech-mobile .mm-chip.k-fail{color:var(--red);background:var(--red-soft);border-color:rgba(154,99,18,.3)}
   .mech-mobile .mm-link{display:flex;justify-content:center;padding:.7rem 0}
-  .mech-mobile .mm-chip{font-family:var(--mono);font-size:.74rem;color:var(--amber);background:var(--amber-soft);
-    border:1px solid rgba(200,134,30,.3);border-radius:999px;padding:.28rem .8rem}
 
   /* ledger: horizontal-scroll table -> stacked, fully-readable cards */
   .ledger-wrap{overflow-x:visible}
@@ -1196,30 +1197,36 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   ];
   var i=0;
 
-  function apply(it){
+  function setClaim(it){
     vT.textContent=it.vt; vD.textContent=it.vd;
-    rT.textContent=it.rt; rD.textContent=it.rd;
-    chip.textContent=it.chip;
+    rT.textContent='Checking system of record…'; rD.textContent='\u00a0';
     rc.classList.remove('v-ok','v-warn','v-fail');
-    rc.classList.add('v-'+it.k);
+    chip.textContent='checking…';
     chip.classList.remove('k-ok','k-warn','k-fail');
+  }
+  function reveal(it){
+    rT.textContent=it.rt; rD.textContent=it.rd;
+    rc.classList.add('v-'+it.k);
+    chip.textContent=it.chip;
     chip.classList.add('k-'+it.k);
   }
+  function apply(it){ setClaim(it); reveal(it); }
 
   apply(items[0]);
   if(reduced) return;
 
-  var iv=null;
+  var iv=null, t1=null, t2=null;
   function step(){
     box.classList.add('mm-swap');
-    setTimeout(function(){
+    t1=setTimeout(function(){
       i=(i+1)%items.length;
-      apply(items[i]);
+      setClaim(items[i]);            // claim + neutral "checking" record
       box.classList.remove('mm-swap');
+      t2=setTimeout(function(){ reveal(items[i]); }, 1100);  // brief wait, then verdict
     }, 420);
   }
-  function start(){ if(!iv && onMobile()){ iv=setInterval(step, 3600); } }
-  function stop(){ if(iv){ clearInterval(iv); iv=null; } }
+  function start(){ if(!iv && onMobile()){ iv=setInterval(step, 4200); } }
+  function stop(){ if(iv){ clearInterval(iv); iv=null; } clearTimeout(t1); clearTimeout(t2); }
 
   if('IntersectionObserver' in window){
     new IntersectionObserver(function(ents){
@@ -1261,8 +1268,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  vec2 q = vec2(uv.x*aspect, uv.y);',
     '  float t = u_time;',
     // desktop: bloom sits right (0.60-0.80 x, lower). portrait: pull to center and lift it up.
-    '  vec2 srcA = mix(vec2(0.60*aspect, 0.40), vec2(0.40*aspect, 0.62), portrait);',          // claim (warm)
-    '  vec2 srcB = mix(vec2(0.80*aspect, 0.64), vec2(0.60*aspect, 0.78), portrait);',          // record (cool)
+    '  vec2 srcA = mix(vec2(0.60*aspect, 0.40), vec2(0.46*aspect, 0.30), portrait);',          // claim (warm)
+    '  vec2 srcB = mix(vec2(0.80*aspect, 0.64), vec2(0.66*aspect, 0.44), portrait);',          // record (cool)
     '  srcA += 0.045*vec2(sin(t*0.20), cos(t*0.15)) + u_mouse*vec2(0.03*aspect,0.03);',
     '  srcB += 0.045*vec2(cos(t*0.20), sin(t*0.25)) + u_mouse*vec2(0.03*aspect,0.03);',
     '  float dA = distance(q, srcA);',
@@ -1277,9 +1284,9 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  float band = smoothstep(0.62, 0.97, amp);',
     '  float constructive = smoothstep(0.30, 1.0, sum*0.5+0.5);',
     '  float xfall = mix(smoothstep(0.30, 0.66, uv.x), 1.0, portrait);',
-    '  vec2 vignCtr = mix(vec2(0.72,0.5), vec2(0.5,0.62), portrait);',
+    '  vec2 vignCtr = mix(vec2(0.72,0.5), vec2(0.56,0.32), portrait);',
     '  float vign  = smoothstep(1.10, 0.20, distance(uv, vignCtr));',
-    '  float presence = xfall*vign;',
+    '  float presence = xfall*vign*mix(1.0, 0.72, portrait);',
     '  vec3 paper = vec3(0.945,0.953,0.945);',
     '  vec3 warm  = vec3(0.784,0.525,0.118);',
     '  vec3 cool  = vec3(0.122,0.435,0.690);',

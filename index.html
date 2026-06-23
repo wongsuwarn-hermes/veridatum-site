@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veridatum: Verify what AI agents actually did</title>
+<meta name="description" content="Veridatum compares AI-agent claims with your systems of record, so teams can separate vendor-reported success from business reality.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii00NCAtNDIgODggODQiPjxjaXJjbGUgY3g9Ii05LjMzIiBjeT0iLTUuODMiIHI9IjI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNDODg2MUUiIHN0cm9rZS13aWR0aD0iNC4yIiBvcGFjaXR5PSIwLjk1Ii8+PGNpcmNsZSBjeD0iOS4zMyIgY3k9IjUuODMiIHI9IjI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMxRjZGQjAiIHN0cm9rZS13aWR0aD0iNC4yIiBvcGFjaXR5PSIwLjk1Ii8+PHBhdGggZD0iTTEyLjQ4LC0xOS45OCBBMjYsMjYgMCAwIDEgLTEyLjQ4LDE5Ljk4IEEyNiwyNiAwIDAgMSAxMi40OCwtMTkuOTggWiIgZmlsbD0iIzJFOUU2RSIgZmlsbC1vcGFjaXR5PSIxIiBzdHJva2U9IiMyRTlFNkUiIHN0cm9rZS13aWR0aD0iNC40MCIvPjwvc3ZnPg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;450;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* paper + ink */
+  --paper:#F1F3F1;        /* warm cream */
+  --paper-2:#EAEDEB;      /* warm section */
+  --paper-3:#E2E6E3;      /* deeper warm */
+  --ink:#14181A;          /* near-black, warm */
+  --ink-2:#333A3B;        /* primary body */
+  --muted:#586061;        /* secondary */
+  --faint:#899091;        /* faint labels */
+  --line:rgba(20,24,26,.10);
+  --line-2:rgba(20,24,26,.17);
+  --card:#FFFFFF;
+  --card-warm:#F7F9F8;
+
+  /* signal system */
+  --proof:#1F7A55;        /* forest green — verified / proof */
+  --proof-bright:#2E9E6E;
+  --proof-soft:#E2F1EA;
+  --warm:#C8861E;         /* vendor / agent signal (warm) */
+  --warm-deep:#9A6312;
+  --warm-soft:#F8EEDB;
+  --cool:#1F6FB0;         /* buyer system-of-record signal (cool) */
+  --cool-deep:#14507F;
+  --cool-soft:#E2EEF7;
+
+  /* verdict palette */
+  --amber:#9A6312;
+  --amber-soft:#F8EEDB;
+  --red:#9A6312;
+  --red-soft:#F8EEDB;
+  --neutral:#5C6566;
+  --neutral-soft:#E6E9E8;
+
+  /* dark surfaces */
+  --deep:#0E1A14;         /* evidence ink */
+  --deep-2:#0A1410;
+  --deep-green:#0E1A14;   /* final CTA */
+
+  --shadow-sm:0 1px 3px rgba(18,24,22,.05),0 8px 24px rgba(18,24,22,.05);
+  --shadow:0 24px 70px rgba(18,24,22,.09);
+  --radius:20px;
+  --maxw:1140px;
+
+  --display:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --body:'Inter',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono','SF Mono','Fira Mono',ui-monospace,monospace;
+}
+
+html{scroll-behavior:smooth;background:var(--paper);-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--body);background:var(--paper);color:var(--ink);
+  overflow-x:hidden;line-height:1.6;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(31,122,85,.16)}
+
+/* ---------- shared atoms ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;width:100%}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:var(--mono);font-size:.74rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--proof);
+}
+.eyebrow::before{
+  content:"";width:7px;height:7px;border-radius:999px;
+  background:var(--proof-bright);box-shadow:0 0 14px rgba(46,158,110,.7);
+}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
+.section{padding:clamp(64px,9vw,128px) clamp(20px,5vw,64px)}
+.section-head{max-width:680px;margin-bottom:2.6rem}
+.section h2{
+  font-size:clamp(1.9rem,3.6vw,3.3rem);line-height:1.06;
+  letter-spacing:-.022em;margin:.85rem 0 1rem;color:var(--ink);
+}
+.section-sub{
+  color:var(--ink-2);font-size:clamp(1rem,1.35vw,1.16rem);
+  line-height:1.62;max-width:600px;letter-spacing:-.005em;
+}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  border-radius:11px;padding:.86rem 1.4rem;font-weight:600;font-size:.95rem;
+  font-family:var(--body);letter-spacing:-.01em;cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease,background .2s ease,border-color .2s ease;
+}
+.btn:focus-visible{outline:2.5px solid var(--proof-bright);outline-offset:3px}
+.btn-primary{background:linear-gradient(180deg,#2A8A63 0%,#13593C 100%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(8,20,14,.32),0 1px 2px rgba(8,20,14,.4),0 16px 32px rgba(15,70,48,.30)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(8,20,14,.32),0 2px 4px rgba(8,20,14,.4),0 22px 44px rgba(15,70,48,.38)}
+.btn-secondary{background:rgba(255,255,255,.55);color:var(--ink);border:1px solid var(--line-2)}
+.btn-secondary:hover{background:#fff;transform:translateY(-2px);border-color:var(--proof)}
+.btn .arw{transition:transform .2s ease}
+.btn:hover .arw{transform:translateX(3px)}
+
+/* ---------- nav ---------- */
+.nav{
+  position:fixed;z-index:50;top:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px clamp(20px,5vw,64px);
+  background:linear-gradient(180deg,rgba(241,243,241,.9),rgba(241,243,241,.55) 72%,rgba(241,243,241,0));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.nav-left{display:flex;align-items:center;gap:.7rem}
+.brand{display:inline-flex;align-items:center;gap:.5rem}
+.brand-mark{width:25px;height:auto;display:block;flex:0 0 auto}
+.brand-name{font-family:var(--display);font-weight:700;font-size:1.18rem;letter-spacing:-.02em;color:var(--ink)}
+.nav-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.navlinks{display:flex;align-items:center;gap:1.5rem}
+.navlinks a:not(.nav-cta){color:var(--muted);font-size:.9rem;font-weight:450;transition:color .18s}
+.navlinks a:not(.nav-cta):hover{color:var(--ink)}
+.nav-cta{
+  font-family:var(--mono);font-size:.8rem;padding:.5rem .9rem;border-radius:8px;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.5);color:var(--ink);
+  transition:border-color .18s,background .18s;
+}
+.nav-cta:hover{border-color:var(--proof);background:#fff}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;min-height:100svh;overflow:hidden;display:flex;align-items:center;
+  background:
+    radial-gradient(120% 95% at 82% 42%,rgba(255,255,255,.9),rgba(241,243,241,0) 46%),
+    radial-gradient(70% 60% at 88% 50%,rgba(214,238,228,.5),rgba(241,243,241,0) 60%),
+    linear-gradient(118deg,#F4F6F5 0%,#EDF1EF 52%,#E9F0EC 100%);
+}
+/* CSS fallback "proof object" — visible if WebGL is unavailable, otherwise sits beneath the canvas */
+.hero-fallback{
+  position:absolute;z-index:0;top:50%;right:-6%;transform:translateY(-50%);
+  width:min(78vw,820px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(120,210,170,.5) 0%,rgba(120,210,170,0) 26%),
+    conic-gradient(from 30deg,rgba(200,134,30,.32),rgba(31,111,176,.32),rgba(46,158,110,.3),rgba(200,134,30,.32));
+  filter:blur(34px);opacity:.55;
+}
+.hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+.hero-scrim{
+  position:absolute;z-index:2;inset:0;pointer-events:none;
+  background:linear-gradient(96deg,
+    rgba(241,243,241,.99) 0%,rgba(241,243,241,.95) 42%,
+    rgba(241,243,241,.42) 60%,rgba(241,243,241,0) 76%,rgba(241,243,241,0) 100%);
+}
+.hero::after{
+  content:"";position:absolute;z-index:3;left:0;right:0;bottom:0;height:16vh;
+  background:linear-gradient(0deg,var(--paper),rgba(241,243,241,0));pointer-events:none;
+}
+.hero-inner{position:relative;z-index:5;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.hero-content{max-width:640px}
+.hero h1{
+  font-size:clamp(2.9rem,6.4vw,6rem);line-height:.99;letter-spacing:-.034em;
+  font-weight:600;color:var(--ink);margin:1.1rem 0 1.5rem;
+}
+.hero .sub{
+  max-width:520px;font-size:clamp(1.08rem,1.55vw,1.35rem);line-height:1.55;
+  color:var(--ink-2);letter-spacing:-.01em;font-weight:400;
+}
+.cta-row{display:flex;gap:.85rem;flex-wrap:wrap;margin-top:2.3rem}
+.trust-strip{
+  display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2.2rem;max-width:540px;
+}
+.trust-chip{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.01em;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:.4rem .72rem;
+  background:rgba(255,255,255,.42);white-space:nowrap;
+}
+.trust-chip b{color:var(--proof);font-weight:500}
+
+/* ---------- claim → evidence (mechanic) ---------- */
+.primitive{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.55rem .7rem;margin-top:.4rem;
+  font-family:var(--mono);font-size:.8rem;color:var(--muted);
+}
+.primitive .step{
+  background:var(--card-warm);border:1px solid var(--line);border-radius:8px;
+  padding:.42rem .7rem;color:var(--ink-2);
+}
+.primitive .step.verdict{color:var(--proof);border-color:rgba(31,122,85,.25);background:var(--proof-soft)}
+.primitive .arrow{color:var(--faint)}
+
+.mech{
+  --cellw:206px;--gap:14px;
+  margin-top:2.8rem;position:relative;border:1px solid var(--line);
+  border-radius:24px;background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(247,249,248,.6));
+  box-shadow:var(--shadow);overflow:hidden;padding:22px;
+}
+.mech::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 70% at 50% 50%,rgba(31,122,85,.05),rgba(255,255,255,0) 60%);
+}
+.mech-track{
+  position:relative;border-radius:16px;border:1px solid var(--line);
+  overflow:hidden;height:128px;
+}
+.mech-track-vendor{background:rgba(247,249,248,.7)}
+.mech-track-record{background:rgba(247,249,248,.7)}
+.track-label{
+  position:absolute;top:13px;left:18px;z-index:3;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;
+}
+.track-label.vendor-label{color:var(--warm-deep)}
+.track-label.record-label{color:var(--cool-deep)}
+.track-label .badge{
+  display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:.45rem;vertical-align:middle;
+}
+.vendor-label .badge{background:var(--warm)}
+.record-label .badge{background:var(--cool)}
+.row{display:flex;gap:var(--gap);padding:38px 18px 14px;align-items:flex-start;height:100%}
+.cell{
+  flex:1 1 0;min-width:0;padding:12px 14px;border-radius:11px;
+  font-size:.8rem;line-height:1.4;opacity:0;transform:translateX(42px);
+  transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 8px 22px rgba(18,24,22,.05);
+}
+.cell.show{opacity:1;transform:translateX(0)}
+.cell .c-title{display:block;font-weight:600;font-family:var(--body);color:var(--ink);font-size:.86rem;letter-spacing:-.01em;margin-bottom:3px}
+.cell .c-detail{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.cell.vendor{background:var(--warm-soft);border:1px solid rgba(200,134,30,.22)}
+.cell.vendor .c-detail{color:var(--warm-deep)}
+.cell.record{background:var(--cool-soft);border:1px solid rgba(31,111,176,.2)}
+.cell.record.v-ok{background:var(--proof-soft);border-color:rgba(31,122,85,.28)}
+.cell.record.v-ok .c-title{color:var(--proof)}
+.cell.record.v-warn{background:var(--amber-soft);border-color:rgba(200,134,30,.3)}
+.cell.record.v-warn .c-title{color:var(--amber)}
+.cell.record.v-fail{background:var(--red-soft);border-color:rgba(154,99,18,.28)}
+.cell.record.v-fail .c-title{color:var(--red)}
+
+/* mechanic: 'reported done' marker on every claim */
+.cell{position:relative}
+.cell.vendor .c-title{padding-right:46px}
+.c-rep{position:absolute;top:11px;right:13px;font-family:var(--mono);font-size:.66rem;letter-spacing:.02em;color:var(--warm-deep);opacity:.85;white-space:nowrap}
+/* mechanic: node 'checking' -> resolve, connector draw */
+.node .chip{transition:color .3s ease,border-color .3s ease,background-color .3s ease}
+.node .chip .pulse{display:inline-block;width:6px;height:6px;border-radius:999px;background:var(--muted);animation:mPulse 1s ease-in-out infinite}
+.node .line{transform-origin:top center;transform:scaleY(0);transition:transform .45s ease}
+.node.show .line{transform:scaleY(1)}
+@keyframes mPulse{0%,100%{opacity:.3;transform:scale(.75)}50%{opacity:1;transform:scale(1.15)}}
+/* mechanic: record 'checking' -> verdict reveal + catch flash on mismatch */
+.cell.record{transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1),background-color .45s ease,border-color .45s ease}
+.cell.record .c-title{transition:color .45s ease}
+.cell.record.reveal.v-warn{animation:mCatchWarn .65s ease}
+.cell.record.reveal.v-fail{animation:mCatchFail .65s ease}
+@keyframes mCatchWarn{0%{box-shadow:0 0 0 0 rgba(200,134,30,0)}25%{box-shadow:0 0 0 4px rgba(200,134,30,.28)}100%{box-shadow:0 8px 22px rgba(18,24,22,.05)}}
+@keyframes mCatchFail{0%{box-shadow:0 0 0 0 rgba(154,99,18,0)}25%{box-shadow:0 0 0 4px rgba(154,99,18,.3)}100%{box-shadow:0 8px 22px rgba(18,24,22,.05)}}
+
+.mech-nodes{display:flex;gap:var(--gap);padding:0 18px;height:42px;align-items:center}
+.node{
+  flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;
+  position:relative;height:100%;opacity:0;transition:opacity .5s ease;
+}
+.node.show{opacity:1}
+.node .line{position:absolute;top:0;bottom:0;width:1.5px;background:var(--line-2)}
+.node .chip{
+  position:relative;z-index:2;display:flex;align-items:center;justify-content:center;
+  min-width:22px;height:22px;padding:0 7px;border-radius:999px;
+  font-family:var(--mono);font-size:.74rem;font-weight:500;background:var(--paper);
+  border:1px solid var(--line-2);color:var(--muted);white-space:nowrap;
+}
+.node.n-ok .line{background:rgba(31,122,85,.45)}
+.node.n-ok .chip{color:var(--proof);border-color:rgba(31,122,85,.4);background:var(--proof-soft)}
+.node.n-warn .line{background:rgba(200,134,30,.45)}
+.node.n-warn .chip{color:var(--amber);border-color:rgba(200,134,30,.4);background:var(--amber-soft)}
+.node.n-fail .line{background:rgba(154,99,18,.45)}
+.node.n-fail .chip{color:var(--red);border-color:rgba(154,99,18,.4);background:var(--red-soft)}
+
+.mech-note{
+  display:flex;align-items:flex-start;gap:.6rem;margin-top:1.6rem;max-width:620px;
+  color:var(--muted);font-size:.92rem;line-height:1.55;
+}
+.mech-note .dot{flex:0 0 6px;width:6px;height:6px;border-radius:999px;background:var(--proof-bright);margin-top:.55rem}
+
+/* ---------- problems ---------- */
+.band-warm{background:linear-gradient(180deg,var(--paper),var(--paper-2) 16%,var(--paper-2) 84%,var(--paper))}
+.problems{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.4rem}
+.problem{
+  background:var(--card-warm);border:1px solid var(--line);border-radius:18px;padding:1.5rem;
+  transition:box-shadow .2s,transform .2s,border-color .2s;min-height:200px;
+  display:flex;flex-direction:column;
+}
+.problem:hover{box-shadow:var(--shadow-sm);transform:translateY(-2px);border-color:var(--line-2)}
+.problem .q-no{font-family:var(--mono);font-size:.74rem;color:var(--faint);letter-spacing:.06em;margin-bottom:1.4rem}
+.problem h3{font-size:1.3rem;letter-spacing:-.02em;margin-bottom:.6rem;color:var(--ink)}
+.problem p{color:var(--muted);font-size:.95rem;line-height:1.56}
+
+/* ---------- ledger ---------- */
+.ledger-shell{
+  margin-top:2.4rem;background:var(--card);border:1px solid var(--line-2);
+  border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
+}
+.ledger-top{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding:1rem 1.3rem;border-bottom:1px solid var(--line);background:var(--paper-2);
+}
+.ledger-top .lt-l{display:flex;align-items:center;gap:.6rem}
+.ledger-top .lt-dot{width:8px;height:8px;border-radius:999px;background:var(--proof-bright)}
+.ledger-top strong{font-family:var(--mono);font-weight:500;font-size:.8rem;letter-spacing:.04em;color:var(--ink-2)}
+.ledger-top span{color:var(--muted);font-size:.82rem}
+.ledger-wrap{overflow-x:auto}
+.ledger{width:100%;border-collapse:collapse;min-width:840px}
+.ledger th{
+  text-align:left;padding:.85rem 1.15rem;font-family:var(--mono);
+  font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;font-weight:500;
+  color:var(--faint);border-bottom:1px solid var(--line);background:var(--card-warm);
+}
+.ledger td{padding:.95rem 1.15rem;border-bottom:1px solid rgba(20,24,26,.06);vertical-align:top;font-size:.9rem;color:var(--ink-2)}
+.ledger tr:last-child td{border-bottom:0}
+.ledger .l-action{font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.ledger .l-proof{font-family:var(--mono);font-size:.79rem;color:var(--muted)}
+.ledger .l-hold{font-family:var(--mono);font-size:.79rem}
+.tag{display:inline-flex;align-items:center;border-radius:999px;padding:.24rem .6rem;font-size:.76rem;font-weight:500;font-family:var(--body)}
+.tag-ok{background:var(--proof-soft);color:var(--proof)}
+.tag-warn{background:var(--amber-soft);color:var(--amber)}
+.tag-skip{background:var(--neutral-soft);color:var(--neutral)}
+.dec{font-weight:600;font-size:.84rem}
+.dec-accept{color:var(--proof)}
+.dec-escalate{color:var(--amber)}
+.dec-exclude{color:var(--neutral)}
+.dec-monitor{color:var(--cool)}
+.dec-dispute{color:var(--amber)}
+
+/* ---------- sprint ---------- */
+.band-deeper{background:var(--paper-2)}
+.sprint{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(300px,.82fr);gap:1.1rem;align-items:stretch}
+.sprint-main{background:var(--card);border:1px solid var(--line-2);border-radius:var(--radius);padding:2.1rem;box-shadow:var(--shadow-sm)}
+.sprint-main h3{font-size:1.55rem;letter-spacing:-.02em;margin-bottom:.5rem;color:var(--ink)}
+.sprint-main .meta{font-family:var(--mono);font-size:.78rem;color:var(--proof);letter-spacing:.04em;margin-bottom:.95rem}
+.sprint-main p{color:var(--ink-2);font-size:.98rem;line-height:1.6;max-width:520px}
+.sprint-list{list-style:none;display:grid;gap:.75rem;margin-top:1.5rem}
+.sprint-list li{display:flex;gap:.7rem;color:var(--muted);font-size:.93rem;line-height:1.5}
+.sprint-list li .chk{flex:0 0 auto;color:var(--proof-bright);font-weight:700;margin-top:.05rem}
+.trust-panel{
+  background:var(--deep);color:#fff;border-radius:var(--radius);padding:2.1rem;
+  display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow);
+}
+.trust-panel .tp-eye{font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:#5BC394}
+.trust-panel h4{font-family:var(--display);font-size:1.32rem;letter-spacing:-.02em;color:#fff;margin:.8rem 0 .7rem}
+.trust-panel .tp-sub{color:rgba(255,255,255,.66);font-size:.92rem;line-height:1.55}
+.trust-list{list-style:none;display:grid;gap:.65rem;margin-top:1.7rem}
+.trust-list li{display:flex;align-items:center;gap:.65rem;font-size:.92rem;color:rgba(255,255,255,.86)}
+.trust-list li .tk{flex:0 0 auto;width:16px;height:16px;border-radius:50%;border:1.5px solid #5BC394;display:inline-flex;align-items:center;justify-content:center}
+.trust-list li .tk::after{content:"";width:5px;height:5px;border-radius:50%;background:#5BC394}
+
+/* ---------- demos ---------- */
+.demos{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.2rem}
+.demo{background:var(--card-warm);border:1px solid var(--line);border-radius:18px;padding:1.7rem;transition:box-shadow .2s,border-color .2s;min-height:190px}
+.demo:hover{box-shadow:var(--shadow-sm);border-color:var(--line-2)}
+.demo .source{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--proof);margin-bottom:1rem}
+.demo h3{font-size:1.2rem;letter-spacing:-.02em;margin-bottom:.6rem;color:var(--ink)}
+.demo p{color:var(--muted);font-size:.93rem;line-height:1.56}
+.caveat{margin-top:1.3rem;color:var(--muted);font-size:.92rem;line-height:1.55;max-width:620px;font-style:italic}
+
+/* ---------- audience ---------- */
+.audience{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2.2rem}
+.aud-col{background:var(--card);border:1px solid var(--line-2);border-radius:var(--radius);padding:1.5rem 1.65rem;box-shadow:var(--shadow-sm)}
+.aud-col h4{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--proof);margin-bottom:1.1rem}
+.aud-list{list-style:none;display:grid;gap:0}
+.aud-list li{font-size:.96rem;color:var(--ink-2);padding:.62rem 0;border-bottom:1px solid var(--line)}
+.aud-list li:last-child{border-bottom:0}
+
+/* ---------- final ---------- */
+.final{
+  padding:clamp(72px,10vw,128px) clamp(20px,5vw,64px);text-align:center;color:#fff;
+  background:radial-gradient(80% 120% at 50% 0%,#163026,#0E1A14 60%);
+}
+.final .eyebrow{color:#5BC394}
+.final .eyebrow::before{background:#5BC394;box-shadow:0 0 14px rgba(91,195,148,.7)}
+.final h2{font-size:clamp(2.2rem,5vw,4rem);line-height:1.02;letter-spacing:-.025em;color:#fff;margin:1rem 0 1.1rem}
+.final p{color:rgba(255,255,255,.7);font-size:1.1rem;line-height:1.58;max-width:560px;margin:0 auto 2.2rem}
+.email-btn{
+  display:inline-flex;align-items:center;gap:.55rem;background:#fff;color:var(--deep-green);
+  border-radius:12px;padding:.95rem 1.5rem;font-weight:600;font-size:1rem;
+  transition:transform .2s,box-shadow .2s;
+}
+.email-btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,.25)}
+.email-btn:focus-visible{outline:2.5px solid #5BC394;outline-offset:3px}
+
+/* ---------- footer ---------- */
+.footer{
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;
+  padding:1.4rem clamp(20px,5vw,64px);background:var(--deep-2);color:rgba(255,255,255,.5);
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.02em;
+}
+.footer a:hover{color:rgba(255,255,255,.85)}
+
+/* ---------- design-partner program extras ---------- */
+.sp-block{margin-top:1.6rem}
+.sp-label{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:.7rem}
+.sprint-list li .chk.arr{color:var(--cool)}
+.tp-cta{margin-top:1.8rem;width:100%}
+
+/* ---------- demo ledger ---------- */
+.demo-ledger{margin-top:1.5rem}
+.demo-ledger .ledger{min-width:760px}
+
+/* ---------- audience reasons + triggers ---------- */
+.aud-why{color:var(--muted);font-size:.86em;font-weight:400}
+.triggers{margin-top:2.4rem}
+.triggers-label{display:block;font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--proof);margin-bottom:1.1rem}
+.trigger-row{display:flex;flex-wrap:wrap;gap:.6rem}
+.trigger{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);border:1px solid var(--line-2);border-radius:999px;padding:.46rem .82rem;background:var(--card-warm)}
+
+/* ---------- trust / data handling ---------- */
+.data-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.3rem}
+.data-card{background:var(--card-warm);border:1px solid var(--line);border-radius:16px;padding:1.4rem}
+.dc-k{font-family:var(--mono);font-size:.78rem;letter-spacing:.01em;color:var(--proof);font-weight:500;margin-bottom:.55rem}
+.data-card p{color:var(--muted);font-size:.9rem;line-height:1.55}
+
+/* ---------- faq ---------- */
+.faq{column-count:2;column-gap:3rem}
+.faq-item{padding:1.4rem 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.faq-q{font-family:var(--display);font-weight:600;font-size:1.12rem;letter-spacing:-.015em;color:var(--ink);margin-bottom:.5rem}
+.faq-a{color:var(--ink-2);font-size:.96rem;line-height:1.62}
+.faq-head{margin-top:3.6rem}
+
+/* ---------- about / founder placeholder ---------- */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.3rem}
+.about-card{display:flex;gap:1.1rem;background:var(--card);border:1px solid var(--line-2);border-radius:18px;padding:1.6rem}
+.about-card.placeholder{border-style:dashed;background:var(--card-warm)}
+.ph-photo{flex:0 0 60px;width:60px;height:60px;border-radius:50%;border:1px dashed var(--line-2);
+  background:repeating-linear-gradient(45deg,rgba(20,24,26,.04),rgba(20,24,26,.04) 6px,transparent 6px,transparent 12px)}
+.about-name{font-family:var(--display);font-weight:600;font-size:1.12rem;color:var(--ink)}
+.about-role{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--proof);margin:.15rem 0 .6rem}
+.about-card p{color:var(--muted);font-size:.92rem;line-height:1.55}
+.about-links{font-family:var(--mono);font-size:.8rem;color:var(--faint);margin-top:.75rem}
+.about-note{font-family:var(--mono);font-size:.76rem;color:var(--amber);margin-top:1.1rem}
+
+/* ---------- final mail line ---------- */
+.final-mail{margin-top:1.2rem!important;font-family:var(--mono);font-size:.82rem;color:rgba(255,255,255,.5)!important}
+.final-mail a{color:rgba(255,255,255,.82);text-decoration:underline}
+
+/* ---------- convergence glyph (brand motif as connective tissue) ---------- */
+.conv-sprite{position:absolute;width:0;height:0;overflow:hidden}
+.conv-glyph{width:22px;height:22px;display:inline-block;flex:0 0 auto}
+.problem-head{display:flex;align-items:center;gap:.6rem;margin-bottom:1.3rem}
+.problem-head .q-no{margin-bottom:0}
+.primitive .conv-glyph{width:19px;height:19px;margin-right:.1rem}
+
+/* ---------- ledger status edge (audit-sober left accent) ---------- */
+.ledger tbody tr.r-ok   td:first-child{box-shadow:inset 3px 0 0 0 var(--proof-bright)}
+.ledger tbody tr.r-warn td:first-child{box-shadow:inset 3px 0 0 0 var(--amber)}
+.ledger tbody tr.r-skip td:first-child{box-shadow:inset 3px 0 0 0 var(--neutral)}
+
+/* ---------- evidence panel: reported vs verified ---------- */
+.evidence{margin-top:2.2rem}
+.ev-chart{
+  background:var(--card);border:1px solid var(--line-2);border-radius:var(--radius);
+  padding:1.6rem 1.7rem;box-shadow:var(--shadow-sm);max-width:680px;
+}
+.ev-eye{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--proof);margin-bottom:1.2rem}
+.bar-row{margin-bottom:1.05rem}
+.bar-head{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;margin-bottom:.4rem}
+.bar-label{font-size:.86rem;color:var(--ink-2);letter-spacing:-.005em}
+.bar-val{font-family:var(--mono);font-size:.86rem;font-weight:500}
+.bar-val.claim{color:var(--warm-deep)}
+.bar-val.record{color:var(--proof)}
+.bar-track{height:12px;border-radius:999px;background:var(--paper-3);overflow:hidden}
+.bar-fill{height:100%;border-radius:999px}
+.bar-fill.claim{width:100%;background:linear-gradient(90deg,var(--warm),var(--warm-deep))}
+.bar-fill.record{background:linear-gradient(90deg,var(--proof-bright),var(--proof))}
+.ev-delta{
+  display:flex;align-items:flex-start;gap:.55rem;margin-top:1.15rem;padding-top:1.05rem;
+  border-top:1px solid var(--line);color:var(--ink-2);font-size:.9rem;line-height:1.5;
+}
+.ev-delta b{color:var(--warm-deep);font-weight:600}
+.ev-src{font-family:var(--mono);font-size:.74rem;color:var(--faint);margin-top:.9rem;letter-spacing:.02em}
+
+/* ---------- sprint flow (real, typed sequence) ---------- */
+.sp-flow-label{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin:2.1rem 0 1rem}
+.sp-flow{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.spf-card{background:var(--card-warm);border:1px solid var(--line);border-radius:14px;padding:1.15rem 1.25rem;height:100%;position:relative}
+.spf-card::after{content:"→";position:absolute;top:1.35rem;right:-.78rem;color:var(--faint);font-family:var(--mono);font-size:.95rem;z-index:2}
+.sp-flow li:last-child .spf-card::after{display:none}
+.spf-n{
+  display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+  border-radius:50%;background:var(--proof-soft);color:var(--proof);border:1px solid rgba(31,122,85,.25);
+  font-family:var(--mono);font-size:.82rem;font-weight:500;margin-bottom:.7rem;
+}
+.spf-t{display:block;font-weight:600;font-size:.96rem;color:var(--ink);letter-spacing:-.01em;margin-bottom:.25rem}
+.spf-d{display:block;color:var(--muted);font-size:.86rem;line-height:1.5}
+
+.sprint-detail{margin-top:1.5rem}
+.sprint-detail>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;
+  font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--proof);
+  border:1px solid var(--line-2);border-radius:999px;padding:.62rem 1.15rem;background:var(--card);transition:background .15s ease}
+.sprint-detail>summary::-webkit-details-marker{display:none}
+.sprint-detail>summary:hover{background:var(--card-warm)}
+.sprint-detail>summary .chev{display:inline-block;transition:transform .2s ease}
+.sprint-detail[open]>summary{margin-bottom:1.5rem}
+.sprint-detail[open]>summary .chev{transform:rotate(90deg)}
+.sprint-detail .sprint{margin-top:0}
+
+/* ---------- responsive ---------- */
+@media(max-width:980px){
+  .navlinks a:not(.nav-cta){display:none}
+  .hero{min-height:auto;padding:128px 0 64px}
+  .hero-canvas{opacity:.92}
+  .hero-scrim{background:linear-gradient(180deg,rgba(241,243,241,.97) 0%,rgba(241,243,241,.86) 40%,rgba(241,243,241,.4) 72%,rgba(241,243,241,.08) 100%)}
+  .problems,.demos{grid-template-columns:1fr}
+  .sp-flow{grid-template-columns:1fr}
+  .spf-card::after{display:none}
+  .data-grid,.about{grid-template-columns:1fr}
+  .sprint{grid-template-columns:1fr}
+  .audience{grid-template-columns:1fr;gap:1.6rem}
+  .faq{column-count:1}
+  .mech{--cellw:170px}
+}
+@media(max-width:560px){
+  .nav{padding:13px 18px}
+  .brand-name{font-size:1.08rem}
+  .brand-mark{width:22px}
+  .nav-tag{display:none}
+  .cta-row{flex-direction:column;align-items:stretch}
+  .cta-row .btn{width:100%}
+  .hero h1{font-size:clamp(2.7rem,11vw,3.6rem)}
+  .section h2{font-size:1.85rem}
+  .mech{--cellw:140px;--gap:10px;padding:14px}
+  .mech-track{height:124px}
+  .row{padding:34px 12px 12px}
+  .cell{font-size:.78rem;padding:10px 11px}
+  .cell .c-title{font-size:.79rem}
+  .cell .c-detail{font-size:.74rem}
+  .ledger-top{flex-direction:column;align-items:flex-start}
+  .problem,.sprint-main,.trust-panel,.demo{border-radius:16px;padding:1.3rem}
+  .primitive{font-size:.74rem}
+}
+
+.mech-mobile{display:none}
+
+@media(max-width:640px){
+  /* secondary depth hidden on phones — still in the DOM for desktop & crawlers */
+  .m-hide{display:none!important}
+
+  /* tighter vertical rhythm */
+  .section{padding-top:54px;padding-bottom:54px}
+  .section-head{margin-bottom:1.85rem}
+  .final{padding-top:62px;padding-bottom:62px}
+
+  /* mechanic: swap the cramped dual-track animation for a static vertical example */
+  .mech{display:none}
+  .mech-mobile{display:block;margin-top:1.9rem;border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(247,249,248,.62));box-shadow:var(--shadow-sm);padding:16px 16px 18px}
+  .mech-mobile .mm-label{font-family:var(--mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+  .mech-mobile .mm-label.v{color:var(--warm-deep)}
+  .mech-mobile .mm-label.r{color:var(--cool-deep);margin-top:.1rem}
+  .mech-mobile .cell{opacity:1;transform:none;width:100%;flex:1 1 auto;display:block}
+  .mech-mobile .mm-link{display:flex;justify-content:center;padding:.7rem 0}
+  .mech-mobile .mm-chip{font-family:var(--mono);font-size:.74rem;color:var(--amber);background:var(--amber-soft);
+    border:1px solid rgba(200,134,30,.3);border-radius:999px;padding:.28rem .8rem}
+
+  /* ledger: horizontal-scroll table -> stacked, fully-readable cards */
+  .ledger-wrap{overflow-x:visible}
+  .ledger{min-width:0;display:block}
+  .ledger thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .ledger tbody,.ledger tr,.ledger td{display:block;width:auto}
+  .ledger tr{border:1px solid var(--line);border-radius:12px;background:var(--card);margin:0 0 .7rem;padding:.45rem .1rem .55rem;box-shadow:var(--shadow-sm)}
+  .ledger tbody tr.r-ok{border-left:3px solid var(--proof-bright)}
+  .ledger tbody tr.r-warn{border-left:3px solid var(--amber)}
+  .ledger tbody tr.r-skip{border-left:3px solid var(--neutral)}
+  .ledger tbody tr.r-ok td:first-child,
+  .ledger tbody tr.r-warn td:first-child,
+  .ledger tbody tr.r-skip td:first-child{box-shadow:none}
+  .ledger td{border-bottom:0;padding:.32rem .95rem}
+  .ledger td::before{content:attr(data-label);display:block;font-family:var(--mono);font-size:.7rem;
+    text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:.12rem}
+  .ledger td.l-action{padding:.5rem .95rem .2rem}
+  .ledger td.l-action::before{display:none}
+  .ledger .l-action{font-size:1rem}
+  .ledger td:last-child{padding-bottom:.55rem}
+  .ledger-top{flex-direction:column;align-items:flex-start;gap:.35rem}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .hero-canvas{opacity:.96}
+}
+</style>
+</head>
+<body>
+
+<svg class="conv-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><symbol id="conv-mark" viewBox="-44 -42 88 84"><circle cx="-9.33" cy="-5.83" r="26" fill="none" stroke="#C8861E" stroke-width="3" opacity="0.95"/><circle cx="9.33" cy="5.83" r="26" fill="none" stroke="#1F6FB0" stroke-width="3" opacity="0.95"/><path d="M12.48,-19.98 A26,26 0 0 1 -12.48,19.98 A26,26 0 0 1 12.48,-19.98 Z" fill="#B8E0CE" fill-opacity="0.4" stroke="#2E9E6E" stroke-width="3.20"/></symbol></svg>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-left">
+    <a class="brand" href="#top" aria-label="Veridatum"><svg class="brand-mark" viewBox="-44 -42 88 84" aria-hidden="true" focusable="false"><circle cx="-9.33" cy="-5.83" r="26" fill="none" stroke="#C8861E" stroke-width="3" opacity="0.95"/><circle cx="9.33" cy="5.83" r="26" fill="none" stroke="#1F6FB0" stroke-width="3" opacity="0.95"/><path d="M12.48,-19.98 A26,26 0 0 1 -12.48,19.98 A26,26 0 0 1 12.48,-19.98 Z" fill="#B8E0CE" fill-opacity="0.4" stroke="#2E9E6E" stroke-width="3.20"/></svg><span class="brand-name">Veridatum</span></a>
+    <span class="nav-tag">AI action verification</span>
+  </div>
+  <div class="navlinks">
+    <a href="#explain">How it works</a>
+    <a href="#ledger">Ledger</a>
+    <a href="#sprint">Design partners</a>
+    <a href="#demos">Method</a>
+    <a href="#trust">Trust</a>
+    <a class="nav-cta" href="mailto:hello@veridatum.io">hello@veridatum.io</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-fallback" aria-hidden="true"></div>
+    <canvas id="hero-bloom" class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <span class="eyebrow">AI action verification</span>
+        <h1 id="hero-title">Verify what AI agents actually did.</h1>
+        <p class="sub">Veridatum compares AI-agent claims with your systems of record, so teams can separate vendor-reported success from business reality.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#sprint">Apply for a design-partner slot <span class="arw">→</span></a>
+          <a class="btn btn-secondary" href="#explain">See how it works</a>
+        </div>
+        <div class="trust-strip">
+          <span class="trust-chip"><b>Read-only</b> · export-first</span>
+          <span class="trust-chip">One workflow</span>
+          <span class="trust-chip">No production writes</span>
+          <span class="trust-chip">No live customer replies</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLAIM TO EVIDENCE -->
+  <section class="section" id="explain">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Claim → evidence</span>
+        <h2>An agent's claim is not a business outcome.</h2>
+        <p class="section-sub">Your system of record is wherever the truth actually lives: Stripe, your order database, your billing system. Veridatum checks each reported action against that record and shows whether it held, meaning the change actually took effect and stayed true, not just that the agent reported it done.</p>
+      </div>
+
+      <div class="primitive" aria-hidden="true">
+        <svg class="conv-glyph" focusable="false"><use href="#conv-mark"/></svg>
+        <span class="step">Claimed action</span><span class="arrow">→</span>
+        <span class="step">System-of-record proof</span><span class="arrow">→</span>
+        <span class="step">Hold or failure</span><span class="arrow">→</span>
+        <span class="step verdict">Accept · dispute · escalate · exclude</span>
+      </div>
+
+      <div class="mech" aria-label="Comparison of what the agent reports against what the buyer's system of record shows, claim by claim">
+        <div class="mech-track mech-track-vendor">
+          <span class="track-label vendor-label"><span class="badge"></span>What the agent reports</span>
+          <div class="row" id="vendorRow"></div>
+        </div>
+        <div class="mech-nodes" id="nodeRow"></div>
+        <div class="mech-track mech-track-record">
+          <span class="track-label record-label"><span class="badge"></span>What your system of record shows</span>
+          <div class="row" id="recordRow"></div>
+        </div>
+      </div>
+
+      <div class="mech-mobile" aria-hidden="true">
+        <div class="mm-label v">What the agent reports</div>
+        <div class="cell vendor"><span class="c-rep">✓ done</span><span class="c-title">Account cancelled</span><span class="c-detail">Subscription terminated</span></div>
+        <div class="mm-link"><span class="mm-chip">≠ mismatch</span></div>
+        <div class="mm-label r">What your system of record shows</div>
+        <div class="cell record v-warn"><span class="c-title">Still billing at 24h</span><span class="c-detail">Escalate · billing never stopped</span></div>
+      </div>
+
+      <p class="mech-note"><span class="dot"></span><span>Vendor dashboards report their own status, counts, and completions. Veridatum's job is the independent comparison: does that reported status match the systems you already trust?</span></p>
+    </div>
+  </section>
+
+  <!-- PROBLEM EXAMPLES -->
+  <section class="section band-warm">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Where reports break</span>
+        <h2>Questions a vendor dashboard can't settle on its own.</h2>
+      </div>
+      <div class="problems">
+        <article class="problem">
+          <div class="problem-head"><svg class="conv-glyph" aria-hidden="true" focusable="false"><use href="#conv-mark"/></svg><div class="q-no">01 · payment state</div></div>
+          <h3>Refund issued?</h3>
+          <p>An agent says it refunded the customer. Did the payment record post, at the right amount, without reversal or duplication?</p>
+        </article>
+        <article class="problem">
+          <div class="problem-head"><svg class="conv-glyph" aria-hidden="true" focusable="false"><use href="#conv-mark"/></svg><div class="q-no">02 · account state</div></div>
+          <h3>Cancellation completed?</h3>
+          <p>An agent says it cancelled an account. Did billing actually stop, and did the entitlement change?</p>
+        </article>
+        <article class="problem">
+          <div class="problem-head"><svg class="conv-glyph" aria-hidden="true" focusable="false"><use href="#conv-mark"/></svg><div class="q-no">03 · ticket state</div></div>
+          <h3>Ticket resolved?</h3>
+          <p>An agent says the ticket was resolved. Did the backend state change, or did a human quietly reopen and fix it later?</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERIFIED ACTION LEDGER -->
+  <section class="section" id="ledger">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Verified action ledger</span>
+        <h2>Reported success, checked against business reality.</h2>
+        <p class="section-sub">The output is an evidence-backed ledger: the claimed action, the proof from your system of record, whether it held, our verification status, and the decision. Refunds, credits, cancellations, and billing-state changes are useful first workflows. The artifact covers any backend state an agent can change.</p>
+      </div>
+      <div class="ledger-shell">
+        <div class="ledger-top">
+          <div class="lt-l"><span class="lt-dot"></span><strong>SAMPLE DELIVERABLE PREVIEW · support actions</strong></div>
+          <span>We only ever read your data, via an export you share or read-only access</span>
+        </div>
+        <div class="ledger-wrap">
+          <table class="ledger">
+            <thead>
+              <tr><th>Claimed action</th><th>System-of-record proof</th><th>Hold status</th><th>Veridatum status</th><th>Decision</th></tr>
+            </thead>
+            <tbody>
+              <tr class="r-ok">
+                <td class="l-action" data-label="Claimed action">Refund issued</td>
+                <td class="l-proof" data-label="Proof">Stripe refund posted, £42.50</td>
+                <td class="l-hold" data-label="Hold">Held 7 days, not reversed</td>
+                <td data-label="Status"><span class="tag tag-ok">Verified</span></td>
+                <td data-label="Decision"><span class="dec dec-accept">Accept</span></td>
+              </tr>
+              <tr class="r-warn m-hide">
+                <td class="l-action" data-label="Claimed action">Cancellation completed</td>
+                <td class="l-proof" data-label="Proof">No cancellation in billing record</td>
+                <td class="l-hold" data-label="Hold">Still billing at 24h</td>
+                <td data-label="Status"><span class="tag tag-warn">Disputed</span></td>
+                <td data-label="Decision"><span class="dec dec-escalate">Escalate</span></td>
+              </tr>
+              <tr class="r-skip">
+                <td class="l-action" data-label="Claimed action">Duplicate refund requested</td>
+                <td class="l-proof" data-label="Proof">Already refunded once</td>
+                <td class="l-hold" data-label="Hold">No change</td>
+                <td data-label="Status"><span class="tag tag-skip">Excluded</span></td>
+                <td data-label="Decision"><span class="dec dec-exclude">Good restraint</span></td>
+              </tr>
+              <tr class="r-ok">
+                <td class="l-action" data-label="Claimed action">Order address changed</td>
+                <td class="l-proof" data-label="Proof">Shipping address changed to new recipient before fulfilment</td>
+                <td class="l-hold" data-label="Hold">Held</td>
+                <td data-label="Status"><span class="tag tag-ok">Verified</span></td>
+                <td data-label="Decision"><span class="dec dec-monitor">Monitor</span></td>
+              </tr>
+              <tr class="r-ok m-hide">
+                <td class="l-action" data-label="Claimed action">Credit applied</td>
+                <td class="l-proof" data-label="Proof">Wallet balance updated, £15.00</td>
+                <td class="l-hold" data-label="Hold">Held 3 days</td>
+                <td data-label="Status"><span class="tag tag-ok">Verified</span></td>
+                <td data-label="Decision"><span class="dec dec-accept">Accept</span></td>
+              </tr>
+              <tr class="r-warn">
+                <td class="l-action" data-label="Claimed action">Ticket closed</td>
+                <td class="l-proof" data-label="Proof">Ticket marked resolved</td>
+                <td class="l-hold" data-label="Hold">Reopened in 2h</td>
+                <td data-label="Status"><span class="tag tag-warn">Disputed</span></td>
+                <td data-label="Decision"><span class="dec dec-dispute">Dispute</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESIGN-PARTNER PROGRAM -->
+  <section class="section band-deeper" id="sprint">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Design-partner program</span>
+        <h2>Three design-partner slots.</h2>
+        <p class="section-sub">Veridatum is early. We're taking three design partners to run a Verified Action Sprint on one real workflow, and limiting the program so each sprint can directly shape the method. You bring a redacted sample and a short debrief. You get the kind of buyer-readable ledger previewed above, direct input into the method, and design-partner terms.</p>
+      </div>
+      <p class="sp-flow-label">How a sprint runs</p>
+      <ol class="sp-flow">
+        <li><div class="spf-card"><span class="spf-n">1</span><span class="spf-t">Describe a workflow</span><span class="spf-d">No data or credentials to start: just one workflow where an agent changes backend state, and the decision attached to it.</span></div></li>
+        <li><div class="spf-card"><span class="spf-n">2</span><span class="spf-t">Sample &amp; source-of-truth mapping</span><span class="spf-d">A redacted export or scoped read-only sample, mapped to the records that actually hold the truth, with clean joins and messy ones noted.</span></div></li>
+        <li><div class="spf-card"><span class="spf-n">3</span><span class="spf-t">Verified ledger &amp; recommendation</span><span class="spf-d">An evidence-backed ledger of what held, what didn't, and what to accept, dispute, escalate, or exclude.</span></div></li>
+      </ol>
+
+      <details class="sprint-detail">
+        <summary>See what a sprint involves <span class="chev">→</span></summary>
+      <div class="sprint">
+        <div class="sprint-main">
+          <div class="meta">1–2 WEEKS · ONE WORKFLOW · 3 SLOTS</div>
+          <h3>The Verified Action Sprint.</h3>
+          <p>Start from a redacted export or a scoped read-only sample, as small as a few dozen actions. Leave with a verified action ledger showing what the agent claimed, what your system of record shows, whether it held, and what should be accepted, disputed, escalated, or excluded.</p>
+
+          <div class="sp-block">
+            <div class="sp-label">What you bring</div>
+            <ul class="sprint-list">
+              <li><span class="chk arr">→</span><span>One workflow where an AI agent changes backend state: refunds, cancellations, credits, order or account changes, entitlement changes, or ticket resolutions.</span></li>
+              <li><span class="chk arr">→</span><span>A redacted sample of agent/vendor claims and the matching system-of-record records. No production access or credentials.</span></li>
+              <li><span class="chk arr">→</span><span>A named decision the result would inform, and roughly the exposure attached to it.</span></li>
+            </ul>
+          </div>
+
+          <div class="sp-block">
+            <div class="sp-label">What you get</div>
+            <ul class="sprint-list">
+              <li><span class="chk">✓</span><span>A verified action ledger and an evidence-backed register of disputed, failed, and corrected actions.</span></li>
+              <li><span class="chk">✓</span><span>Source-of-truth mapping notes and sample evidence packets you can inspect.</span></li>
+              <li><span class="chk">✓</span><span>A recommendation (trust, gate, dispute, monitor, or stop), plus design-partner terms and direct input into the method.</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <aside class="trust-panel">
+          <div>
+            <div class="tp-eye">How we start</div>
+            <h4>A verification layer, not another agent.</h4>
+            <p class="tp-sub">Veridatum begins outside your production path. No write access is needed to start, and the first step needs no data at all, just a description of the workflow.</p>
+          </div>
+          <ul class="trust-list">
+            <li><span class="tk"></span>Read-only or export-first</li>
+            <li><span class="tk"></span>One workflow at a time</li>
+            <li><span class="tk"></span>No production writes</li>
+            <li><span class="tk"></span>No live customer replies</li>
+          </ul>
+          <a class="btn btn-primary tp-cta" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Apply for a slot: describe a workflow <span class="arw">→</span></a>
+        </aside>
+      </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- PUBLIC METHOD DEMOS -->
+  <section class="section" id="demos">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Public method demos</span>
+        <h2>On public benchmarks, Veridatum caught what a dashboard would miss.</h2>
+        <p class="section-sub">We ran the same claim-vs-record verification over public, MIT-licensed agent benchmarks: their task specs, sandbox databases, and result traces. We have no production customers yet; the findings below are our own analysis of that public data.</p>
+      </div>
+
+      <div class="evidence">
+        <div class="ev-chart">
+          <div class="ev-eye">Reported vs. verified · τ-bench retail</div>
+          <div class="bar-row">
+            <div class="bar-head"><span class="bar-label">If every reported action is trusted</span><span class="bar-val claim">100%</span></div>
+            <div class="bar-track"><div class="bar-fill claim"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-head"><span class="bar-label">Actually held in the system of record</span><span class="bar-val record">74%</span></div>
+            <div class="bar-track"><div class="bar-fill record" style="width:74%"></div></div>
+          </div>
+          <p class="ev-delta"><svg class="conv-glyph" aria-hidden="true" focusable="false" style="margin-top:1px"><use href="#conv-mark"/></svg><span><b>26% didn't match.</b> Across 456 GPT-4.1 retail simulations, 118 disagreed with the database on final state. That's the gap a vendor dashboard wouldn't surface on its own.</span></p>
+          <div class="ev-src">Veridatum analysis · public MIT-licensed benchmark · not real customer data</div>
+        </div>
+      </div>
+
+      <div class="ledger-shell demo-ledger m-hide">
+        <div class="ledger-top">
+          <div class="lt-l"><span class="lt-dot"></span><strong>METHOD DEMO · public benchmarks</strong></div>
+          <span>Public benchmark data, not real customer data. Each row cites its source task</span>
+        </div>
+        <div class="ledger-wrap">
+          <table class="ledger">
+            <thead>
+              <tr><th>Claimed / attempted action</th><th>Backend (benchmark) proof</th><th>Hold status</th><th>Veridatum status</th><th>Source</th></tr>
+            </thead>
+            <tbody>
+              <tr class="r-ok">
+                <td class="l-action">Cancel order after price drop</td>
+                <td class="l-proof">Order + item status = cancelled; refund £249 to card</td>
+                <td class="l-hold">Held</td>
+                <td><span class="tag tag-ok">Verified</span></td>
+                <td class="l-proof">STATE-Bench · 40</td>
+              </tr>
+              <tr class="r-warn">
+                <td class="l-action">Cancel customer's order, refund promised</td>
+                <td class="l-proof">Wrong order cancelled; db_match = false</td>
+                <td class="l-hold">Mismatch</td>
+                <td><span class="tag tag-warn">Disputed</span></td>
+                <td class="l-proof">τ-bench · 51</td>
+              </tr>
+              <tr class="r-skip">
+                <td class="l-action">Second courtesy refund requested</td>
+                <td class="l-proof">Already refunded; no mutation performed</td>
+                <td class="l-hold">No change</td>
+                <td><span class="tag tag-skip">Excluded</span></td>
+                <td class="l-proof">STATE-Bench · 134</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="demos m-hide">
+        <article class="demo">
+          <div class="source">τ-bench retail · Sierra Research</div>
+          <h3>A quarter of runs didn't match the business state.</h3>
+          <p>Across 456 GPT-4.1 retail simulations, 118 failed the final-state check: the agent's transcript and the database disagreed. In one, the agent cancelled the wrong order and told the customer a refund was on its way; in another it acted past an explicit "don't cancel anything else" instruction, inflating the refund. 104 of 114 tasks involve state-changing actions.</p>
+        </article>
+        <article class="demo">
+          <div class="source">Microsoft STATE-Bench · enterprise support</div>
+          <h3>Verifying the math, and the safe "no".</h3>
+          <p>Across 150 support tasks with 952 explicit state assertions, the same method checks more than "resolved": refund amounts after clawbacks, waived fees, and multi-leg compound actions. It also verifies restraint: an agent correctly refusing a duplicate refund is a control worth confirming, not just successful actions.</p>
+        </article>
+      </div>
+
+      <p class="caveat">Public synthetic benchmarks demonstrate the verification method and the shape of the artifact. They do not, by themselves, prove buyer demand, real-world error rates, or that production data is this clean. Buyer deployments run on buyer-authorized systems of record.</p>
+    </div>
+  </section>
+
+  <!-- WHO IT'S FOR -->
+  <section class="section band-warm">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Who it's for</span>
+        <h2>For teams letting AI agents change business state.</h2>
+        <p class="section-sub">When an agent can move money, close accounts, or change entitlements, someone has to confirm it actually happened, before you trust it, pay for it, or take it into a vendor renewal.</p>
+      </div>
+      <div class="audience">
+        <div class="aud-col m-hide">
+          <h4>State changes verified</h4>
+          <ul class="aud-list">
+            <li>Customer state</li>
+            <li>Order state</li>
+            <li>Payment state</li>
+            <li>Account state</li>
+            <li>Entitlement state</li>
+            <li>Support-ticket state</li>
+          </ul>
+        </div>
+        <div class="aud-col">
+          <h4>By team</h4>
+          <ul class="aud-list">
+            <li>Support · Ops <span class="aud-why">· silent failures and cleanup</span></li>
+            <li>Finance <span class="aud-why">· what to trust, pay, or dispute</span></li>
+            <li>Procurement <span class="aud-why">· buyer-owned evidence for renewals</span></li>
+            <li>Risk · Compliance <span class="aud-why">· reconstruct what agents changed</span></li>
+            <li>BizOps · Data <span class="aud-why">· reliable joins and definitions</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="triggers m-hide">
+        <span class="triggers-label">A good moment to start</span>
+        <div class="trigger-row">
+          <span class="trigger">An AI vendor renewal, true-up, or review coming up</span>
+          <span class="trigger">A new agent action type about to go live</span>
+          <span class="trigger">An incident that needs reconstructing</span>
+          <span class="trigger">A workflow that moves real money</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST & DATA HANDLING + FAQ -->
+  <section class="section" id="trust">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Trust &amp; data handling</span>
+        <h2>What we touch, and what we don't.</h2>
+        <p class="section-sub">Verification means looking at sensitive records, so the handling matters as much as the method. Here is how a sprint is scoped.</p>
+      </div>
+      <div class="data-grid">
+        <div class="data-card"><div class="dc-k">Read-only, export-first</div><p>We start from a redacted export or scoped read-only access. No write access, ever, to begin.</p></div>
+        <div class="data-card m-hide"><div class="dc-k">One workflow at a time</div><p>A sprint covers a single workflow and a small sample, often a few dozen actions, not your whole database.</p></div>
+        <div class="data-card m-hide"><div class="dc-k">Minimised and redacted</div><p>We ask for the smallest sample that proves the method, with identifiers redacted wherever the verification doesn't need them.</p></div>
+        <div class="data-card"><div class="dc-k">Not used to train anything</div><p>Your data is used to produce your ledger and nothing else. It is never used to train models.</p></div>
+        <div class="data-card"><div class="dc-k">Deleted on request</div><p>Sample data is kept only for the sprint and deleted afterwards on request. An NDA before anything is shared is fine.</p></div>
+        <div class="data-card"><div class="dc-k">No production path</div><p>Veridatum sits entirely outside your live systems, with no production writes and no live replies to your customers.</p></div>
+      </div>
+
+      <div class="section-head faq-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Common questions.</h2>
+      </div>
+      <div class="faq">
+        <div class="faq-item m-hide">
+          <div class="faq-q">Isn't this just our vendor's dashboard, or something we could build ourselves?</div>
+          <p class="faq-a">Neither is independent, and independence is the point. A vendor's dashboard reports what the vendor counted; your own team can reconcile it for internal use, but in a dispute the vendor contests your numbers first, and risk or compliance sign-offs are built to distrust a check run by the same side it's checking. A neutral, buyer-owned ledger both sides can reference is harder to wave away. The hard part isn't the reconciliation. It's knowing which record holds the truth, and what "actually held" means when two systems disagree, per action type and across messy systems.</p>
+        </div>
+        <div class="faq-item m-hide">
+          <div class="faq-q">Is this invoice reconciliation or AI-spend management?</div>
+          <p class="faq-a">No. Veridatum checks whether a business action actually became true in your systems, not whether usage arithmetic adds up. It can inform what's payable or what to take into a renewal, but it is not invoice reconciliation or spend management.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do you need access to our production systems?</div>
+          <p class="faq-a">No. A sprint runs on a redacted export or scoped read-only access. The first step needs no data at all, just a description of the workflow.</p>
+        </div>
+        <div class="faq-item m-hide">
+          <div class="faq-q">What if our logs and records are messy?</div>
+          <p class="faq-a">Expected. Part of the sprint is mapping agent/vendor claims to the right source-of-truth records and noting where the join is clean and where it isn't. You get those mapping notes either way.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How much does a design-partner sprint cost?</div>
+          <p class="faq-a">Design-partner terms are deliberately light, and scoped to the workflow and the decision attached to it. We'll quote it on a short call once we've confirmed the workflow is a fit. There are three slots.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What do you need from us to start?</div>
+          <p class="faq-a">One workflow where an agent changes backend state, a redacted sample of the agent's claims and the matching records, and a named decision the result would inform. That's it to begin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT / FOUNDER — hidden for launch. To restore: remove the `hidden` attribute below, then replace the placeholder content with the real founder bio. -->
+  <section class="section band-deeper" id="about" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Who's behind Veridatum</span>
+        <h2>The people behind Veridatum.</h2>
+        <p class="section-sub">For a buyer being asked to share records, who is behind the work is one of the strongest trust signals there is. This section is a placeholder. Fill it in before sharing the site.</p>
+      </div>
+      <div class="about">
+        <div class="about-card placeholder">
+          <div class="ph-photo" aria-hidden="true"></div>
+          <div class="about-body">
+            <div class="about-name">[ Founder name ]</div>
+            <div class="about-role">Founder</div>
+            <p>[ One short paragraph: relevant background (verification, payments, audit, ML evaluation, support operations) and why you started Veridatum. Two or three concrete sentences is plenty. ]</p>
+            <div class="about-links">[ LinkedIn · email ]</div>
+          </div>
+        </div>
+        <div class="about-card placeholder">
+          <div class="ph-photo" aria-hidden="true"></div>
+          <div class="about-body">
+            <div class="about-name">[ Co-founder name (optional) ]</div>
+            <div class="about-role">Co-founder</div>
+            <p>[ Optional second profile. Delete this card if you're solo for now. ]</p>
+            <div class="about-links">[ LinkedIn · email ]</div>
+          </div>
+        </div>
+      </div>
+      <p class="about-note">⚠ Placeholder: replace with real names and bios before sharing with prospective design partners.</p>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final">
+    <span class="eyebrow">Three slots open</span>
+    <h2>Start with one workflow.</h2>
+    <p>Pick one AI-agent workflow where reported success needs checking against business reality. No data or credentials to start: just a description, and we'll tell you what evidence would verify it.</p>
+    <a class="email-btn" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Describe a workflow <span class="arw">→</span></a>
+    <p class="final-mail">or email <a href="mailto:hello@veridatum.io">hello@veridatum.io</a></p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>Veridatum · AI action verification</span>
+  <span>Read-only, export-first verification layer · <a href="mailto:hello@veridatum.io">veridatum.io</a></span>
+</footer>
+
+<!-- ============ DUAL-TRACK MECHANIC ============ -->
+<script>
+(function(){
+  var vendorRow = document.getElementById('vendorRow');
+  var recordRow = document.getElementById('recordRow');
+  var nodeRow   = document.getElementById('nodeRow');
+  if(!vendorRow || !recordRow || !nodeRow) return;
+
+  var pairs = [
+    {v:{t:'Refund issued',d:'£42.50 refund processed'},   r:{t:'Confirmed',d:'Stripe refund posted, not reversed',k:'ok'},   chip:'✓'},
+    {v:{t:'Account cancelled',d:'Subscription terminated'}, r:{t:'Mismatch',d:'Still billing at 24h',k:'warn'},            chip:'≠'},
+    {v:{t:'Ticket resolved',d:'Issue marked closed'},       r:{t:'Reopened',d:'Customer reopened within 2h',k:'fail'},        chip:'↻'},
+    {v:{t:'Credit applied',d:'£15.00 wallet credit'},       r:{t:'Confirmed',d:'Wallet balance updated',k:'ok'},             chip:'✓'},
+    {v:{t:'Address updated',d:'Shipping address changed'},  r:{t:'Confirmed',d:'Changed before fulfilment',k:'ok'},          chip:'✓'},
+    {v:{t:'Plan upgraded',d:'Plan change applied'},  r:{t:'Mismatch',d:'Plan unchanged in billing',k:'warn'},         chip:'≠'}
+  ];
+
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var perSet = window.matchMedia('(max-width:820px)').matches ? 2
+             : window.matchMedia('(max-width:1140px)').matches ? 3 : 4;
+  var setIdx = 0;
+
+  function clearRows(){
+    [vendorRow, recordRow, nodeRow].forEach(function(row){
+      row.querySelectorAll('.cell,.node').forEach(function(el){ el.remove(); });
+    });
+  }
+
+  function resolve(nd,rc,p){
+    nd.classList.add('n-'+p.r.k);
+    nd.querySelector('.chip').textContent = p.chip;
+    rc.classList.add('v-'+p.r.k);
+    if(p.r.k!=='ok'){ rc.classList.add('reveal'); }
+  }
+
+  function build(){
+    clearRows();
+    for(var i=0;i<perSet;i++){
+      var p = pairs[(setIdx*perSet + i) % pairs.length];
+
+      var vc = document.createElement('div');
+      vc.className = 'cell vendor';
+      vc.innerHTML = '<span class="c-rep">\u2713 done</span><span class="c-title">'+p.v.t+'</span><span class="c-detail">'+p.v.d+'</span>';
+      vendorRow.appendChild(vc);
+
+      var nd = document.createElement('div');
+      nd.className = 'node';
+      nd.innerHTML = '<span class="line"></span><span class="chip"><span class="pulse"></span></span>';
+      nodeRow.appendChild(nd);
+
+      var rc = document.createElement('div');
+      rc.className = 'cell record';
+      rc.innerHTML = '<span class="c-title">'+p.r.t+'</span><span class="c-detail">'+p.r.d+'</span>';
+      recordRow.appendChild(rc);
+
+      if(reduced){
+        vc.classList.add('show'); nd.classList.add('show'); rc.classList.add('show');
+        resolve(nd,rc,p);
+      } else {
+        (function(vc,nd,rc,p,i){
+          var base = i*200;
+          setTimeout(function(){ vc.classList.add('show'); }, 140 + base);
+          setTimeout(function(){ nd.classList.add('show'); }, 440 + base);
+          setTimeout(function(){ rc.classList.add('show'); }, 640 + base);
+          setTimeout(function(){ resolve(nd,rc,p); }, 2400 + base);
+        })(vc,nd,rc,p,i);
+      }
+    }
+    setIdx++;
+  }
+
+  function cycle(){
+    var cells = []
+      .concat([].slice.call(vendorRow.children))
+      .concat([].slice.call(recordRow.children));
+    cells.forEach(function(el,i){
+      setTimeout(function(){ el.style.opacity='0'; el.style.transform='translateX(-34px)'; }, i*45);
+    });
+    [].slice.call(nodeRow.children).forEach(function(el,i){
+      setTimeout(function(){ el.style.opacity='0'; }, i*45);
+    });
+    setTimeout(build, 520);
+  }
+
+  var iv = null;
+  function start(){ if(!iv && !reduced){ iv = setInterval(cycle, 7400); } }
+  function stop(){ if(iv){ clearInterval(iv); iv = null; } }
+
+  build();
+  start();
+  var mech = document.querySelector('.mech');
+  if(mech){
+    mech.addEventListener('mouseenter', stop);
+    mech.addEventListener('mouseleave', start);
+  }
+})();
+</script>
+
+
+<!-- ============ HERO — PHASE BLOOM ============ -->
+<script>
+(function(){
+  "use strict";
+  var canvas  = document.getElementById('hero-bloom');
+  var hero    = canvas ? canvas.closest('.hero') : null;
+  var fallback= document.querySelector('.hero-fallback');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var DPR     = Math.min(window.devicePixelRatio || 1, 1.5);
+  var LOOP    = 2*Math.PI/0.05;   // ~125.66s: every animated frequency completes whole cycles in this span
+
+  var gl=null, prog=null, raf=0, running=false;
+  var uRes, uTime, uMouse;
+  var visible=true, onScreen=true;
+  var ptx=0, pty=0, px=0, py=0;   // pointer target / smoothed
+
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  var VERT = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.0,1.0); }';
+  var FRAG = [
+    'precision highp float;',
+    'uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse;',
+    'void main(){',
+    '  vec2 frag = gl_FragCoord.xy;',
+    '  vec2 uv = frag / u_res;',
+    '  float aspect = u_res.x / u_res.y;',
+    '  vec2 q = vec2(uv.x*aspect, uv.y);',
+    '  float t = u_time;',
+    '  vec2 srcA = vec2(0.60*aspect, 0.40);',          // claim (warm)
+    '  vec2 srcB = vec2(0.80*aspect, 0.64);',          // record (cool)
+    '  srcA += 0.045*vec2(sin(t*0.20), cos(t*0.15)) + u_mouse*vec2(0.03*aspect,0.03);',
+    '  srcB += 0.045*vec2(cos(t*0.20), sin(t*0.25)) + u_mouse*vec2(0.03*aspect,0.03);',
+    '  float dA = distance(q, srcA);',
+    '  float dB = distance(q, srcB);',
+    '  float k = 24.0; float w = 1.35;',
+    '  float al = pow(0.5+0.5*sin(t*0.5), 2.0);',       // assemble -> hold -> disperse
+    '  float offset = mix(3.14159265, 0.0, smoothstep(0.15,0.95,al));',
+    '  float fA = sin(k*dA - w*t);',
+    '  float fB = sin(k*dB - w*t + offset);',
+    '  float sum = fA + fB;',
+    '  float amp = abs(sum)*0.5;',
+    '  float band = smoothstep(0.62, 0.97, amp);',
+    '  float constructive = smoothstep(0.30, 1.0, sum*0.5+0.5);',
+    '  float xfall = smoothstep(0.30, 0.66, uv.x);',
+    '  float vign  = smoothstep(1.10, 0.20, distance(uv, vec2(0.72,0.5)));',
+    '  float presence = xfall*vign;',
+    '  vec3 paper = vec3(0.945,0.953,0.945);',
+    '  vec3 warm  = vec3(0.784,0.525,0.118);',
+    '  vec3 cool  = vec3(0.122,0.435,0.690);',
+    '  vec3 proof = vec3(0.122,0.478,0.333);',
+    '  vec3 gold  = vec3(0.96,0.80,0.38);',
+    '  vec3 col = paper;',
+    '  col = mix(col, paper*0.80, presence*0.70);',
+    '  float wc = smoothstep(0.55,1.0, fA*0.5+0.5);',
+    '  float cc = smoothstep(0.55,1.0, fB*0.5+0.5);',
+    '  col += warm*wc*presence*0.50;',
+    '  col += cool*cc*presence*0.50;',
+    '  float bloom = constructive*band*presence*al;',
+    '  col = mix(col, proof, clamp(bloom*0.82,0.0,1.0));',
+    '  col += gold*pow(bloom,2.0)*0.82;',
+    '  col += vec3(1.0)*pow(bloom,3.5)*0.72;',
+    '  float fringe = smoothstep(0.22,0.0,amp)*presence*al;',
+    '  col = mix(col, col*0.60, fringe*0.58);',
+    '  float g = fract(sin(dot(frag, vec2(12.9898,78.233)))*43758.5453);',
+    '  col += (g-0.5)*0.015;',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+  ].join('\n');
+
+  function compile(type,src){
+    var sh=gl.createShader(type); gl.shaderSource(sh,src); gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)) return null;
+    return sh;
+  }
+  function showFallback(){
+    if(canvas) canvas.style.display='none';
+    if(fallback) fallback.style.opacity='1';
+  }
+  function init(){
+    if(!canvas) return false;
+    try{ gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl'); }
+    catch(e){ gl=null; }
+    if(!gl){ showFallback(); return false; }
+    var vs=compile(gl.VERTEX_SHADER,VERT), fs=compile(gl.FRAGMENT_SHADER,FRAG);
+    if(!vs||!fs){ showFallback(); return false; }
+    prog=gl.createProgram(); gl.attachShader(prog,vs); gl.attachShader(prog,fs); gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){ showFallback(); return false; }
+    gl.useProgram(prog);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(prog,'p');
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    uRes=gl.getUniformLocation(prog,'u_res');
+    uTime=gl.getUniformLocation(prog,'u_time');
+    uMouse=gl.getUniformLocation(prog,'u_mouse');
+    return true;
+  }
+  function size(){
+    if(!gl||!hero) return;
+    var r=hero.getBoundingClientRect();
+    var w=Math.max(1,Math.round(r.width*DPR)), h=Math.max(1,Math.round(r.height*DPR));
+    if(canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; }
+    gl.viewport(0,0,canvas.width,canvas.height);
+    gl.useProgram(prog);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+  }
+  function render(tsec){
+    px=lerp(px,ptx,0.06); py=lerp(py,pty,0.06);
+    gl.useProgram(prog);
+    gl.uniform1f(uTime, tsec % LOOP);
+    gl.uniform2f(uMouse, px, py);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  function loop(ts){
+    if(!running) return;
+    if(!visible || !onScreen){ running=false; raf=0; return; }
+    render(ts/1000);
+    raf=requestAnimationFrame(loop);
+  }
+  function start(){ if(running) return; running=true; raf=requestAnimationFrame(loop); }
+  function stop(){ running=false; if(raf) cancelAnimationFrame(raf); raf=0; }
+
+  if(!init()) return;
+  size();
+
+  if(hero){
+    hero.addEventListener('mousemove', function(e){
+      var r=hero.getBoundingClientRect();
+      ptx=clamp(((e.clientX-r.left)/r.width)*2-1,-1,1);
+      pty=clamp(((e.clientY-r.top)/r.height)*2-1,-1,1);
+    });
+    hero.addEventListener('mouseleave', function(){ ptx=0; pty=0; });
+  }
+
+  var rT;
+  window.addEventListener('resize', function(){
+    clearTimeout(rT);
+    rT=setTimeout(function(){ size(); if(reduced) render(Math.PI); }, 140);
+  });
+
+  if(reduced){
+    render(Math.PI);   // single static aligned-bloom frame
+  } else {
+    document.addEventListener('visibilitychange', function(){
+      visible=!document.hidden; if(visible && !raf && onScreen) start();
+    });
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(ents){
+        onScreen=ents[0].isIntersecting; if(onScreen && !raf && visible) start();
+      }, { threshold:0.02 }).observe(canvas);
+    }
+    start();
+  }
+})();
+</script>
+</body>
+</html>

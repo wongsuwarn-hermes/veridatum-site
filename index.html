@@ -1268,8 +1268,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  vec2 q = vec2(uv.x*aspect, uv.y);',
     '  float t = u_time;',
     // desktop: bloom sits right (0.60-0.80 x, lower). portrait: pull to center and lift it up.
-    '  vec2 srcA = mix(vec2(0.60*aspect, 0.40), vec2(0.46*aspect, 0.30), portrait);',          // claim (warm)
-    '  vec2 srcB = mix(vec2(0.80*aspect, 0.64), vec2(0.66*aspect, 0.44), portrait);',          // record (cool)
+    '  vec2 srcA = mix(vec2(0.60*aspect, 0.40), vec2(0.66*aspect, 0.80), portrait);',          // claim (warm)
+    '  vec2 srcB = mix(vec2(0.80*aspect, 0.64), vec2(0.80*aspect, 0.88), portrait);',          // record (cool)
     '  srcA += 0.045*vec2(sin(t*0.20), cos(t*0.15)) + u_mouse*vec2(0.03*aspect,0.03);',
     '  srcB += 0.045*vec2(cos(t*0.20), sin(t*0.25)) + u_mouse*vec2(0.03*aspect,0.03);',
     '  float dA = distance(q, srcA);',
@@ -1284,8 +1284,9 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  float band = smoothstep(0.62, 0.97, amp);',
     '  float constructive = smoothstep(0.30, 1.0, sum*0.5+0.5);',
     '  float xfall = mix(smoothstep(0.30, 0.66, uv.x), 1.0, portrait);',
-    '  vec2 vignCtr = mix(vec2(0.72,0.5), vec2(0.56,0.32), portrait);',
-    '  float vign  = smoothstep(1.10, 0.20, distance(uv, vignCtr));',
+    '  vec2 vignCtr = mix(vec2(0.72,0.5), vec2(0.74,0.82), portrait);',
+    '  float vignOuter = mix(1.10, 0.62, portrait);',
+    '  float vign  = smoothstep(vignOuter, 0.12, distance(uv, vignCtr));',
     '  float presence = xfall*vign*mix(1.0, 0.72, portrait);',
     '  vec3 paper = vec3(0.945,0.953,0.945);',
     '  vec3 warm  = vec3(0.784,0.525,0.118);',

@@ -524,8 +524,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 @media(max-width:980px){
   .navlinks a:not(.nav-cta){display:none}
   .hero{min-height:auto;padding:128px 0 64px}
-  .hero-canvas{opacity:.92}
-  .hero-scrim{background:linear-gradient(180deg,rgba(241,243,241,.97) 0%,rgba(241,243,241,.86) 40%,rgba(241,243,241,.4) 72%,rgba(241,243,241,.08) 100%)}
+  .hero-canvas{opacity:1}
+  .hero-scrim{background:linear-gradient(180deg,rgba(241,243,241,.82) 0%,rgba(241,243,241,.5) 38%,rgba(241,243,241,.12) 68%,rgba(241,243,241,0) 100%)}
   .problems,.demos{grid-template-columns:1fr}
   .sp-flow{grid-template-columns:1fr}
   .spf-card::after{display:none}
@@ -573,7 +573,13 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .mech-mobile .mm-label{font-family:var(--mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
   .mech-mobile .mm-label.v{color:var(--warm-deep)}
   .mech-mobile .mm-label.r{color:var(--cool-deep);margin-top:.1rem}
-  .mech-mobile .cell{opacity:1;transform:none;width:100%;flex:1 1 auto;display:block}
+  .mech-mobile .cell{opacity:1;transform:none;width:100%;flex:1 1 auto;display:block;transition:opacity .4s ease,transform .4s ease,background-color .45s ease,border-color .45s ease}
+  .mech-mobile .cell .c-title{transition:color .45s ease}
+  .mech-mobile.mm-swap .cell{opacity:0;transform:translateY(6px)}
+  .mech-mobile.mm-swap .mm-chip{opacity:0}
+  .mech-mobile .mm-chip{transition:opacity .4s ease,color .45s ease,background-color .45s ease,border-color .45s ease}
+  .mech-mobile .mm-chip.k-ok{color:var(--proof);background:var(--proof-soft);border-color:rgba(31,122,85,.3)}
+  .mech-mobile .mm-chip.k-fail{color:var(--red);background:var(--red-soft);border-color:rgba(154,99,18,.3)}
   .mech-mobile .mm-link{display:flex;justify-content:center;padding:.7rem 0}
   .mech-mobile .mm-chip{font-family:var(--mono);font-size:.74rem;color:var(--amber);background:var(--amber-soft);
     border:1px solid rgba(200,134,30,.3);border-radius:999px;padding:.28rem .8rem}
@@ -590,10 +596,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .ledger tbody tr.r-ok td:first-child,
   .ledger tbody tr.r-warn td:first-child,
   .ledger tbody tr.r-skip td:first-child{box-shadow:none}
-  .ledger td{border-bottom:0;padding:.32rem .95rem}
-  .ledger td::before{content:attr(data-label);display:block;font-family:var(--mono);font-size:.7rem;
-    text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:.12rem}
-  .ledger td.l-action{padding:.5rem .95rem .2rem}
+  .ledger td{border-bottom:0;padding:.3rem .95rem;display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+  .ledger td::before{content:attr(data-label);font-family:var(--mono);font-size:.7rem;
+    text-transform:uppercase;letter-spacing:.07em;color:var(--faint);flex:0 0 auto}
+  .ledger td.l-proof{flex-direction:column;align-items:flex-start;gap:.1rem}
+  .ledger td.l-proof::before{margin-bottom:.1rem}
+  .ledger td.l-action{padding:.5rem .95rem .2rem;display:block}
   .ledger td.l-action::before{display:none}
   .ledger .l-action{font-size:1rem}
   .ledger td:last-child{padding-bottom:.55rem}
@@ -621,7 +629,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     <a href="#sprint">Design partners</a>
     <a href="#demos">Method</a>
     <a href="#trust">Trust</a>
-    <a class="nav-cta" href="mailto:hello@veridatum.io">hello@veridatum.io</a>
+    <a class="nav-cta" href="mailto:hello@veridatum.io?subject=Veridatum%20enquiry">hello@veridatum.io</a>
   </div>
 </nav>
 
@@ -680,12 +688,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         </div>
       </div>
 
-      <div class="mech-mobile" aria-hidden="true">
+      <div class="mech-mobile" id="mechMobile" aria-hidden="true">
         <div class="mm-label v">What the agent reports</div>
-        <div class="cell vendor"><span class="c-rep">✓ done</span><span class="c-title">Account cancelled</span><span class="c-detail">Subscription terminated</span></div>
-        <div class="mm-link"><span class="mm-chip">≠ mismatch</span></div>
+        <div class="cell vendor" id="mmVendor"><span class="c-rep">✓ done</span><span class="c-title" id="mmVTitle">Account cancelled</span><span class="c-detail" id="mmVDetail">Subscription terminated</span></div>
+        <div class="mm-link"><span class="mm-chip" id="mmChip">≠ mismatch</span></div>
         <div class="mm-label r">What your system of record shows</div>
-        <div class="cell record v-warn"><span class="c-title">Still billing at 24h</span><span class="c-detail">Escalate · billing never stopped</span></div>
+        <div class="cell record v-warn" id="mmRecord"><span class="c-title" id="mmRTitle">Still billing at 24h</span><span class="c-detail" id="mmRDetail">Escalate · billing never stopped</span></div>
       </div>
 
       <p class="mech-note"><span class="dot"></span><span>Vendor dashboards report their own status, counts, and completions. Veridatum's job is the independent comparison: does that reported status match the systems you already trust?</span></p>
@@ -1058,14 +1066,14 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     <h2>Start with one workflow.</h2>
     <p>Pick one AI-agent workflow where reported success needs checking against business reality. No data or credentials to start: just a description, and we'll tell you what evidence would verify it.</p>
     <a class="email-btn" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Describe a workflow <span class="arw">→</span></a>
-    <p class="final-mail">or email <a href="mailto:hello@veridatum.io">hello@veridatum.io</a></p>
+    <p class="final-mail">or email <a href="mailto:hello@veridatum.io?subject=Veridatum%20enquiry">hello@veridatum.io</a></p>
   </section>
 
 </main>
 
 <footer class="footer">
   <span>Veridatum · AI action verification</span>
-  <span>Read-only, export-first verification layer · <a href="mailto:hello@veridatum.io">veridatum.io</a></span>
+  <span>Read-only, export-first verification layer · <a href="mailto:hello@veridatum.io?subject=Veridatum%20enquiry">veridatum.io</a></span>
 </footer>
 
 <!-- ============ DUAL-TRACK MECHANIC ============ -->
@@ -1166,6 +1174,61 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 })();
 </script>
 
+<!-- ============ MOBILE MECHANIC CYCLER ============ -->
+<script>
+(function(){
+  var box = document.getElementById('mechMobile');
+  if(!box) return;
+  var vT=document.getElementById('mmVTitle'), vD=document.getElementById('mmVDetail');
+  var rT=document.getElementById('mmRTitle'), rD=document.getElementById('mmRDetail');
+  var rc=document.getElementById('mmRecord'), chip=document.getElementById('mmChip');
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // only run when the mobile block is actually displayed
+  function onMobile(){ return window.matchMedia('(max-width:640px)').matches; }
+
+  var items = [
+    {vt:'Account cancelled', vd:'Subscription terminated',  rt:'Still billing at 24h',     rd:'Escalate · billing never stopped', k:'warn', chip:'≠ mismatch'},
+    {vt:'Refund issued',     vd:'£42.50 refund processed',  rt:'Confirmed',                rd:'Stripe refund posted, not reversed', k:'ok',  chip:'✓ verified'},
+    {vt:'Ticket resolved',   vd:'Issue marked closed',      rt:'Reopened within 2h',       rd:'Dispute · customer reopened',        k:'fail',chip:'↻ reopened'},
+    {vt:'Credit applied',    vd:'£15.00 wallet credit',     rt:'Confirmed',                rd:'Wallet balance updated',             k:'ok',  chip:'✓ verified'},
+    {vt:'Plan upgraded',     vd:'Plan change applied',      rt:'Plan unchanged in billing',rd:'Escalate · upgrade never posted',    k:'warn',chip:'≠ mismatch'}
+  ];
+  var i=0;
+
+  function apply(it){
+    vT.textContent=it.vt; vD.textContent=it.vd;
+    rT.textContent=it.rt; rD.textContent=it.rd;
+    chip.textContent=it.chip;
+    rc.classList.remove('v-ok','v-warn','v-fail');
+    rc.classList.add('v-'+it.k);
+    chip.classList.remove('k-ok','k-warn','k-fail');
+    chip.classList.add('k-'+it.k);
+  }
+
+  apply(items[0]);
+  if(reduced) return;
+
+  var iv=null;
+  function step(){
+    box.classList.add('mm-swap');
+    setTimeout(function(){
+      i=(i+1)%items.length;
+      apply(items[i]);
+      box.classList.remove('mm-swap');
+    }, 420);
+  }
+  function start(){ if(!iv && onMobile()){ iv=setInterval(step, 3600); } }
+  function stop(){ if(iv){ clearInterval(iv); iv=null; } }
+
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(ents){
+      if(ents[0].isIntersecting) start(); else stop();
+    }, {threshold:0.2}).observe(box);
+  } else { start(); }
+  window.addEventListener('resize', function(){ if(!onMobile()) stop(); });
+})();
+</script>
 
 <!-- ============ HERO — PHASE BLOOM ============ -->
 <script>
@@ -1194,10 +1257,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  vec2 frag = gl_FragCoord.xy;',
     '  vec2 uv = frag / u_res;',
     '  float aspect = u_res.x / u_res.y;',
+    '  float portrait = 1.0 - smoothstep(0.85, 1.05, aspect);',  // 1.0 on phones, 0.0 on wide
     '  vec2 q = vec2(uv.x*aspect, uv.y);',
     '  float t = u_time;',
-    '  vec2 srcA = vec2(0.60*aspect, 0.40);',          // claim (warm)
-    '  vec2 srcB = vec2(0.80*aspect, 0.64);',          // record (cool)
+    // desktop: bloom sits right (0.60-0.80 x, lower). portrait: pull to center and lift it up.
+    '  vec2 srcA = mix(vec2(0.60*aspect, 0.40), vec2(0.40*aspect, 0.62), portrait);',          // claim (warm)
+    '  vec2 srcB = mix(vec2(0.80*aspect, 0.64), vec2(0.60*aspect, 0.78), portrait);',          // record (cool)
     '  srcA += 0.045*vec2(sin(t*0.20), cos(t*0.15)) + u_mouse*vec2(0.03*aspect,0.03);',
     '  srcB += 0.045*vec2(cos(t*0.20), sin(t*0.25)) + u_mouse*vec2(0.03*aspect,0.03);',
     '  float dA = distance(q, srcA);',
@@ -1211,8 +1276,9 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  float amp = abs(sum)*0.5;',
     '  float band = smoothstep(0.62, 0.97, amp);',
     '  float constructive = smoothstep(0.30, 1.0, sum*0.5+0.5);',
-    '  float xfall = smoothstep(0.30, 0.66, uv.x);',
-    '  float vign  = smoothstep(1.10, 0.20, distance(uv, vec2(0.72,0.5)));',
+    '  float xfall = mix(smoothstep(0.30, 0.66, uv.x), 1.0, portrait);',
+    '  vec2 vignCtr = mix(vec2(0.72,0.5), vec2(0.5,0.62), portrait);',
+    '  float vign  = smoothstep(1.10, 0.20, distance(uv, vignCtr));',
     '  float presence = xfall*vign;',
     '  vec3 paper = vec3(0.945,0.953,0.945);',
     '  vec3 warm  = vec3(0.784,0.525,0.118);',

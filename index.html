@@ -198,16 +198,6 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 .trust-chip b{color:var(--proof);font-weight:500}
 
 /* ---------- claim → evidence (mechanic) ---------- */
-.primitive{
-  display:flex;flex-wrap:wrap;align-items:center;gap:.55rem .7rem;margin-top:.4rem;
-  font-family:var(--mono);font-size:.8rem;color:var(--muted);
-}
-.primitive .step{
-  background:var(--card-warm);border:1px solid var(--line);border-radius:8px;
-  padding:.42rem .7rem;color:var(--ink-2);
-}
-.primitive .step.verdict{color:var(--proof);border-color:rgba(31,122,85,.25);background:var(--proof-soft)}
-.primitive .arrow{color:var(--faint)}
 
 .mech{
   --cellw:206px;--gap:14px;
@@ -464,7 +454,6 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 .conv-glyph{width:22px;height:22px;display:inline-block;flex:0 0 auto}
 .problem-head{display:flex;align-items:center;gap:.6rem;margin-bottom:1.3rem}
 .problem-head .q-no{margin-bottom:0}
-.primitive .conv-glyph{width:19px;height:19px;margin-right:.1rem}
 
 /* ---------- ledger status edge (audit-sober left accent) ---------- */
 .ledger tbody tr.r-ok   td:first-child{box-shadow:inset 3px 0 0 0 var(--proof-bright)}
@@ -552,7 +541,6 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .cell .c-detail{font-size:.74rem}
   .ledger-top{flex-direction:column;align-items:flex-start}
   .problem,.sprint-main,.trust-panel,.demo{border-radius:16px;padding:1.3rem}
-  .primitive{font-size:.74rem}
 }
 
 .mech-mobile{display:none}
@@ -667,14 +655,6 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         <span class="eyebrow">Claim → evidence</span>
         <h2>An agent's claim is not a business outcome.</h2>
         <p class="section-sub">Your system of record is wherever the truth actually lives: Stripe, your order database, your billing system. Veridatum checks each reported action against that record and shows whether it held, meaning the change actually took effect and stayed true, not just that the agent reported it done.</p>
-      </div>
-
-      <div class="primitive" aria-hidden="true">
-        <svg class="conv-glyph" focusable="false"><use href="#conv-mark"/></svg>
-        <span class="step">Claimed action</span><span class="arrow">→</span>
-        <span class="step">System-of-record proof</span><span class="arrow">→</span>
-        <span class="step">Hold or failure</span><span class="arrow">→</span>
-        <span class="step verdict">Accept · dispute · escalate · exclude</span>
       </div>
 
       <div class="mech" aria-label="Comparison of what the agent reports against what the buyer's system of record shows, claim by claim">

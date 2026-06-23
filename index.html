@@ -567,7 +567,10 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .mech-mobile.mm-swap .mm-chip{opacity:0}
   .mech-mobile .mm-chip{transition:opacity .4s ease,color .45s ease,background-color .45s ease,border-color .45s ease}
   .mech-mobile .mm-chip{font-family:var(--mono);font-size:.74rem;color:var(--neutral);background:var(--neutral-soft);
-    border:1px solid var(--line-2);border-radius:999px;padding:.28rem .8rem}
+    border:1px solid var(--line-2);border-radius:999px;padding:.28rem .8rem;display:inline-flex;align-items:center;gap:.4rem}
+  .mech-mobile .mm-mark{width:14px;height:14px;flex:0 0 auto;display:block}
+  .mech-mobile .mm-chip:not(.k-ok):not(.k-warn):not(.k-fail) .mm-mark{animation:mmSpin 1.6s linear infinite}
+  @keyframes mmSpin{to{transform:rotate(360deg)}}
   .mech-mobile .mm-chip.k-ok{color:var(--proof);background:var(--proof-soft);border-color:rgba(31,122,85,.3)}
   .mech-mobile .mm-chip.k-warn{color:var(--amber);background:var(--amber-soft);border-color:rgba(200,134,30,.3)}
   .mech-mobile .mm-chip.k-fail{color:var(--red);background:var(--red-soft);border-color:rgba(154,99,18,.3)}
@@ -672,7 +675,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
       <div class="mech-mobile" id="mechMobile" aria-hidden="true">
         <div class="mm-label v">What the agent reports</div>
         <div class="cell vendor" id="mmVendor"><span class="c-rep">✓ done</span><span class="c-title" id="mmVTitle">Account cancelled</span><span class="c-detail" id="mmVDetail">Subscription terminated</span></div>
-        <div class="mm-link"><span class="mm-chip" id="mmChip">≠ mismatch</span></div>
+        <div class="mm-link"><span class="mm-chip" id="mmChip"><svg class="mm-mark" viewBox="-44 -42 88 84" aria-hidden="true" focusable="false"><circle cx="-9.33" cy="-5.83" r="26" fill="none" stroke="#C8861E" stroke-width="6" opacity="0.95"/><circle cx="9.33" cy="5.83" r="26" fill="none" stroke="#1F6FB0" stroke-width="6" opacity="0.95"/><path d="M12.48,-19.98 A26,26 0 0 1 -12.48,19.98 A26,26 0 0 1 12.48,-19.98 Z" fill="#B8E0CE" fill-opacity="0.4" stroke="#2E9E6E" stroke-width="6.4"/></svg><span class="mm-chip-txt" id="mmChipTxt">≠ mismatch</span></span></div>
         <div class="mm-label r">What your system of record shows</div>
         <div class="cell record v-warn" id="mmRecord"><span class="c-title" id="mmRTitle">Still billing at 24h</span><span class="c-detail" id="mmRDetail">Escalate · billing never stopped</span></div>
       </div>
@@ -1162,7 +1165,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   if(!box) return;
   var vT=document.getElementById('mmVTitle'), vD=document.getElementById('mmVDetail');
   var rT=document.getElementById('mmRTitle'), rD=document.getElementById('mmRDetail');
-  var rc=document.getElementById('mmRecord'), chip=document.getElementById('mmChip');
+  var rc=document.getElementById('mmRecord'), chip=document.getElementById('mmChip'), chipTxt=document.getElementById('mmChipTxt');
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // only run when the mobile block is actually displayed
@@ -1181,13 +1184,13 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     vT.textContent=it.vt; vD.textContent=it.vd;
     rT.textContent='Checking system of record…'; rD.textContent='\u00a0';
     rc.classList.remove('v-ok','v-warn','v-fail');
-    chip.textContent='checking…';
+    chipTxt.textContent='checking…';
     chip.classList.remove('k-ok','k-warn','k-fail');
   }
   function reveal(it){
     rT.textContent=it.rt; rD.textContent=it.rd;
     rc.classList.add('v-'+it.k);
-    chip.textContent=it.chip;
+    chipTxt.textContent=it.chip;
     chip.classList.add('k-'+it.k);
   }
   function apply(it){ setClaim(it); reveal(it); }

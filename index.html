@@ -1243,6 +1243,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   var FRAG = [
     'precision highp float;',
     'uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse;',
+    'float hash21(vec2 p){ return fract(sin(dot(p,vec2(27.609,57.143)))*43758.5453); }',
+    'float vnoise(vec2 p){',
+    '  vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);',
+    '  float a=hash21(i), b=hash21(i+vec2(1.0,0.0)), c=hash21(i+vec2(0.0,1.0)), d=hash21(i+vec2(1.0,1.0));',
+    '  return mix(mix(a,b,f.x), mix(c,d,f.x), f.y);',
+    '}',
     'void main(){',
     '  vec2 frag = gl_FragCoord.xy;',
     '  vec2 uv = frag / u_res;',
@@ -1288,6 +1294,40 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  col += vec3(1.0)*pow(bloom,3.5)*0.72;',
     '  float fringe = smoothstep(0.22,0.0,amp)*presence*al;',
     '  col = mix(col, col*0.60, fringe*0.58);',
+    // ---- Veridatum signal nodes: additive lights riding the EXISTING dark diffraction lines ----
+    // Use the same destructive-interference value that already draws the subtle dark pattern.
+    // This prevents a second blocky layer: nodes can appear only where the old dark fringe already exists.
+    '  float darkLane = smoothstep(0.18, 0.02, amp);',
+    // along-lane coordinate: moving outward through the field, but only visible on darkLane.
+    '  float flow = 0.5*(k*(dA + dB)) - w*t*1.85;',
+    // keep the mechanic inside the central interaction field, away from the top-right corner.
+    '  vec2 nodeCtr = mix(vec2(0.67*aspect,0.48), vec2(0.72*aspect,0.82), portrait);',
+    '  vec2 nd = q - nodeCtr; nd.x *= 0.82;',
+    '  float nodeZone = smoothstep(0.38, 0.05, length(nd)) * presence * al;',
+    // discrete soft nodes, not dashes: a tight smooth pulse along each dark lane.
+    '  float dotPhase = abs(fract(flow*0.78) - 0.5);',
+    '  float dotAlong = smoothstep(0.105, 0.0, dotPhase);',
+    '  float node = darkLane * pow(dotAlong, 2.6) * nodeZone;',
+    // classify nodes with a coarse stable field; mostly verified, some mismatch.
+    '  float laneId = floor((dA - dB)*k*0.32);',
+    '  float truth = vnoise(vec2(floor(flow*0.78)*0.55, laneId*0.45) + vec2(t*0.025, 0.0));',
+    '  float isMatch = step(0.34, truth);',
+    '  vec3 okNode = vec3(0.22,0.95,0.58);',
+    '  vec3 badNode = vec3(1.00,0.48,0.14);',
+    '  vec3 nodeCol = mix(badNode, okNode, isMatch);',
+    // mismatch nodes flicker, but never go negative; no subtractive dark blocks, no undefined pow().
+    '  float flick = mix(0.72 + 0.28*sin(t*7.5 + flow*8.0), 1.0, isMatch);',
+    '  float nodeI = max(node * flick, 0.0);',
+    // a very soft verification pulse brightens nodes as it passes; no hard rings.
+    '  float pp = fract(t*0.040);',
+    '  float ringR = pp*0.43;',
+    '  float lr = length(nd);',
+    '  float passed = smoothstep(ringR+0.02, ringR-0.10, lr);',
+    '  nodeI *= 0.72 + 0.45*passed;',
+    // Additive only: the original diffraction pattern remains the only dark layer.
+    // No visible sweep/ring: the active read comes from node motion along the existing dark lanes.
+    '  col += nodeCol * nodeI * 1.15;',
+    '  col += vec3(1.0) * pow(nodeI, 3.0) * 0.22;',
     '  float g = fract(sin(dot(frag, vec2(12.9898,78.233)))*43758.5453);',
     '  col += (g-0.5)*0.015;',
     '  gl_FragColor = vec4(col, 1.0);',

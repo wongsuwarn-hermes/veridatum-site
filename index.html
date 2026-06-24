@@ -169,8 +169,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 .hero-scrim{
   position:absolute;z-index:2;inset:0;pointer-events:none;
   background:linear-gradient(96deg,
-    rgba(241,243,241,.99) 0%,rgba(241,243,241,.95) 42%,
-    rgba(241,243,241,.42) 60%,rgba(241,243,241,0) 76%,rgba(241,243,241,0) 100%);
+    rgba(241,243,241,.97) 0%,rgba(241,243,241,.82) 38%,
+    rgba(241,243,241,.34) 58%,rgba(241,243,241,0) 78%,rgba(241,243,241,0) 100%);
 }
 .hero::after{
   content:"";position:absolute;z-index:3;left:0;right:0;bottom:0;height:16vh;
@@ -1266,7 +1266,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     '  float amp = abs(sum)*0.5;',
     '  float band = smoothstep(0.62, 0.97, amp);',
     '  float constructive = smoothstep(0.30, 1.0, sum*0.5+0.5);',
-    '  float xfall = mix(smoothstep(0.30, 0.66, uv.x), 1.0, portrait);',
+    '  float xfall = mix(smoothstep(0.04, 0.60, uv.x), 1.0, portrait);',
     '  vec2 vignCtr = mix(vec2(0.72,0.5), vec2(0.74,0.82), portrait);',
     '  float vignOuter = mix(1.10, 0.62, portrait);',
     '  float vign  = smoothstep(vignOuter, 0.12, distance(uv, vignCtr));',

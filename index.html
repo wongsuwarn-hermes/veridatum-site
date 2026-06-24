@@ -1230,10 +1230,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var DPR     = Math.min(window.devicePixelRatio || 1, 1.5);
   var LOOP    = 2*Math.PI/0.05;   // ~125.66s: every animated frequency completes whole cycles in this span
+  var START_PHASE = 3*Math.PI;    // first frame: al=0, so waves are present but no interference/diffraction yet
 
   var gl=null, prog=null, raf=0, running=false;
   var uRes, uTime, uMouse;
   var visible=true, onScreen=true;
+  var startTs=null;
   var ptx=0, pty=0, px=0, py=0;   // pointer target / smoothed
 
   function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
@@ -1378,10 +1380,14 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     gl.uniform2f(uMouse, px, py);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
+  function heroTime(ts){
+    if(startTs===null) startTs=ts;
+    return START_PHASE + ((ts-startTs)/1000);
+  }
   function loop(ts){
     if(!running) return;
     if(!visible || !onScreen){ running=false; raf=0; return; }
-    render(ts/1000);
+    render(heroTime(ts));
     raf=requestAnimationFrame(loop);
   }
   function start(){ if(running) return; running=true; raf=requestAnimationFrame(loop); }
@@ -1402,11 +1408,11 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   var rT;
   window.addEventListener('resize', function(){
     clearTimeout(rT);
-    rT=setTimeout(function(){ size(); if(reduced) render(Math.PI); }, 140);
+    rT=setTimeout(function(){ size(); if(reduced) render(START_PHASE); }, 140);
   });
 
   if(reduced){
-    render(Math.PI);   // single static aligned-bloom frame
+    render(START_PHASE);   // single static no-interference frame
   } else {
     document.addEventListener('visibilitychange', function(){
       visible=!document.hidden; if(visible && !raf && onScreen) start();

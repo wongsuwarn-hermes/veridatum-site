@@ -416,19 +416,49 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 /* ---------- audience reasons + triggers ---------- */
 .aud-why{color:var(--muted);font-size:.86em;font-weight:400}
 .triggers{margin-top:2.4rem}
-.triggers-label{display:block;font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--proof);margin-bottom:1.1rem}
+.triggers-label{display:block;font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--proof);margin-bottom:.8rem}
 .trigger-row{display:flex;flex-wrap:wrap;gap:.6rem}
 .trigger{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);border:1px solid var(--line-2);border-radius:999px;padding:.46rem .82rem;background:var(--card-warm)}
+.trigger-lead{max-width:720px;margin:0 0 1rem;color:var(--ink-2);font-size:1rem;line-height:1.55;letter-spacing:-.005em}
+.decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.2rem}
+.decision-card{position:relative;background:var(--card);border:1px solid var(--line-2);border-radius:var(--radius);padding:1.45rem 1.5rem;box-shadow:var(--shadow-sm);overflow:hidden}
+.decision-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--proof-bright)}
+.decision-role{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--proof);margin-bottom:1.1rem}
+.decision-chain{display:grid;gap:.9rem;position:relative}
+.decision-chain::before{content:"";position:absolute;left:8px;top:18px;bottom:18px;width:1px;background:var(--line-2)}
+.decision-step{position:relative;padding-left:1.8rem}
+.decision-step::before{content:"";position:absolute;left:2px;top:.42rem;width:13px;height:13px;border-radius:50%;background:var(--card);border:1px solid rgba(31,122,85,.32);box-shadow:0 0 0 4px rgba(31,122,85,.06)}
+.decision-label{display:block;font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-bottom:.15rem}
+.decision-copy{display:block;color:var(--ink-2);font-size:.92rem;line-height:1.45}
+.decision-payoff{color:var(--ink);font-weight:600}
 
 /* ---------- trust / data handling ---------- */
 .data-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.3rem}
 .data-card{background:var(--card-warm);border:1px solid var(--line);border-radius:16px;padding:1.4rem}
 .dc-k{font-family:var(--mono);font-size:.78rem;letter-spacing:.01em;color:var(--proof);font-weight:500;margin-bottom:.55rem}
 .data-card p{color:var(--muted);font-size:.9rem;line-height:1.55}
+.access-artifact{margin-top:2.3rem;background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(247,249,248,.66));border:1px solid var(--line-2);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:1.35rem}
+.access-ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;counter-reset:access-step;margin-bottom:1rem}
+.access-step{position:relative;background:var(--card-warm);border:1px solid var(--line);border-radius:14px;padding:1rem 1rem 1.05rem;min-height:132px}
+.access-step:not(:last-child)::after{content:"→";position:absolute;top:1.05rem;right:-.58rem;color:var(--faint);font-family:var(--mono);font-size:.9rem;z-index:2}
+.access-n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--proof-soft);border:1px solid rgba(31,122,85,.25);color:var(--proof);font-family:var(--mono);font-size:.78rem;margin-bottom:.65rem}
+.access-k{display:block;font-weight:600;color:var(--ink);letter-spacing:-.01em;margin-bottom:.25rem}
+.access-d{display:block;color:var(--muted);font-size:.84rem;line-height:1.45}
+.boundary-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
+.boundary-panel{border:1px solid var(--line);border-radius:14px;padding:1.15rem 1.2rem;background:var(--card-warm)}
+.boundary-panel.use{background:var(--proof-soft);border-color:rgba(31,122,85,.20)}
+.boundary-k{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--proof);margin-bottom:.8rem}
+.boundary-panel.no .boundary-k{color:var(--neutral)}
+.boundary-list{list-style:none;display:grid;gap:.45rem}
+.boundary-list li{display:flex;align-items:flex-start;gap:.5rem;color:var(--ink-2);font-size:.9rem;line-height:1.42}
+.boundary-list li::before{font-family:var(--mono);font-size:.8rem;line-height:1.4;flex:0 0 auto}
+.boundary-panel.no li::before{content:"×";color:var(--neutral)}
+.boundary-panel.use li::before{content:"✓";color:var(--proof)}
 
 /* ---------- faq ---------- */
 .faq{column-count:2;column-gap:3rem}
 .faq-item{padding:1.4rem 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.faq-label{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--proof);margin-bottom:.45rem}
 .faq-q{font-family:var(--display);font-weight:600;font-size:1.12rem;letter-spacing:-.015em;color:var(--ink);margin-bottom:.5rem}
 .faq-a{color:var(--ink-2);font-size:.96rem;line-height:1.62}
 .faq-head{margin-top:3.6rem}
@@ -602,6 +632,23 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .ledger .l-action{font-size:1rem}
   .ledger td:last-child{padding-bottom:.55rem}
   .ledger-top{flex-direction:column;align-items:flex-start;gap:.35rem}
+  .decision-grid{grid-template-columns:1fr;gap:.85rem}
+  .decision-card{padding:1.2rem 1.25rem}
+  .triggers{margin-top:1.8rem}
+  .trigger{white-space:normal}
+  .access-artifact{padding:1rem}
+  .access-ladder{grid-template-columns:1fr;gap:.7rem}
+  .access-step{min-height:auto}
+  .access-step:not(:last-child)::after{display:none}
+  .boundary-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:720px){
+  .decision-grid{grid-template-columns:1fr}
+  .access-ladder{grid-template-columns:1fr}
+  .access-step{min-height:auto}
+  .access-step:not(:last-child)::after{display:none}
+  .boundary-grid{grid-template-columns:1fr}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -937,31 +984,35 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         <h2>For teams letting AI agents change business state.</h2>
         <p class="section-sub">When an agent can move money, close accounts, or change entitlements, someone has to confirm it actually happened. Veridatum gives buyers source-cited evidence for contested AI-agent outcomes: what held, what failed, what should be paid, and what needs review.</p>
       </div>
-      <div class="audience">
-        <div class="aud-col m-hide">
-          <h4>State changes verified</h4>
-          <ul class="aud-list">
-            <li>Customer state</li>
-            <li>Order state</li>
-            <li>Payment state</li>
-            <li>Account state</li>
-            <li>Entitlement state</li>
-            <li>Support-ticket state</li>
-          </ul>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-role">Support / Ops</div>
+          <div class="decision-chain">
+            <div class="decision-step"><span class="decision-label">Workflow</span><span class="decision-copy">Refunds, cancellations, ticket closures</span></div>
+            <div class="decision-step"><span class="decision-label">Evidence</span><span class="decision-copy">Ticket trail plus system-of-record state</span></div>
+            <div class="decision-step"><span class="decision-label">Decision</span><span class="decision-copy decision-payoff">Fix, gate, or monitor silent failures</span></div>
+          </div>
         </div>
-        <div class="aud-col">
-          <h4>By team</h4>
-          <ul class="aud-list">
-            <li>Support · Ops <span class="aud-why">· silent failures and cleanup</span></li>
-            <li>Finance <span class="aud-why">· what to trust, pay, or dispute</span></li>
-            <li>Procurement <span class="aud-why">· buyer-owned evidence for renewals</span></li>
-            <li>Risk · Compliance <span class="aud-why">· reconstruct what agents changed</span></li>
-            <li>BizOps · Data <span class="aud-why">· reliable joins and definitions</span></li>
-          </ul>
+        <div class="decision-card">
+          <div class="decision-role">Finance</div>
+          <div class="decision-chain">
+            <div class="decision-step"><span class="decision-label">Workflow</span><span class="decision-copy">Refunds, credits, true-ups</span></div>
+            <div class="decision-step"><span class="decision-label">Evidence</span><span class="decision-copy">Payment record plus agent or vendor claim</span></div>
+            <div class="decision-step"><span class="decision-label">Decision</span><span class="decision-copy decision-payoff">Accept, dispute, or exclude</span></div>
+          </div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-role">Procurement</div>
+          <div class="decision-chain">
+            <div class="decision-step"><span class="decision-label">Workflow</span><span class="decision-copy">Vendor-reported agent outcomes</span></div>
+            <div class="decision-step"><span class="decision-label">Evidence</span><span class="decision-copy">Buyer-owned ledger with source citations</span></div>
+            <div class="decision-step"><span class="decision-label">Decision</span><span class="decision-copy decision-payoff">Renew, challenge, or renegotiate</span></div>
+          </div>
         </div>
       </div>
-      <div class="triggers m-hide">
+      <div class="triggers">
         <span class="triggers-label">A good moment to start</span>
+        <p class="trigger-lead">You do not need a platform rollout. You need one scoped verification sprint.</p>
         <div class="trigger-row">
           <span class="trigger">An AI vendor renewal, true-up, or review coming up</span>
           <span class="trigger">A new agent action type about to go live</span>
@@ -980,13 +1031,35 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         <h2>What we touch, and what we don't.</h2>
         <p class="section-sub">Verification means looking at sensitive records, so the handling matters as much as the method. Here is how a sprint is scoped.</p>
       </div>
-      <div class="data-grid">
-        <div class="data-card"><div class="dc-k">First sprint only</div><p>For the first sprint, we start outside your production path: export-first or scoped read-only, no write access, no live customer replies.</p></div>
-        <div class="data-card m-hide"><div class="dc-k">One workflow at a time</div><p>A sprint covers a single workflow and a small sample, often a few dozen actions, not your whole database.</p></div>
-        <div class="data-card m-hide"><div class="dc-k">Minimised and redacted</div><p>We ask for the smallest sample that proves the method, with identifiers redacted wherever the verification doesn't need them.</p></div>
-        <div class="data-card"><div class="dc-k">Not used to train anything</div><p>Your data is used to produce your ledger and nothing else. It is never used to train models.</p></div>
-        <div class="data-card"><div class="dc-k">Deleted by default</div><p>Sample data is deleted after the sprint by default, unless we agree otherwise. An NDA before anything is shared is fine.</p></div>
-        <div class="data-card"><div class="dc-k">No production path</div><p>Veridatum sits entirely outside your live systems, with no production writes and no live replies to your customers.</p></div>
+      <div class="access-artifact" aria-label="First sprint access model">
+        <div class="access-ladder">
+          <div class="access-step"><span class="access-n">0</span><span class="access-k">No data</span><span class="access-d">Start with a workflow description and the decision it would inform.</span></div>
+          <div class="access-step"><span class="access-n">1</span><span class="access-k">Redacted export</span><span class="access-d">Share agent or vendor claims plus matching records when needed.</span></div>
+          <div class="access-step"><span class="access-n">2</span><span class="access-k">Scoped read-only</span><span class="access-d">One workflow, limited fields, no writes, no live customer replies.</span></div>
+          <div class="access-step"><span class="access-n">3</span><span class="access-k">Optional repeat</span><span class="access-d">Only after the first sprint proves useful and the scope stays clear.</span></div>
+        </div>
+        <div class="boundary-grid">
+          <div class="boundary-panel no">
+            <div class="boundary-k">Not needed for a first sprint</div>
+            <ul class="boundary-list">
+              <li>Production writes</li>
+              <li>Live customer replies</li>
+              <li>Broad warehouse access</li>
+              <li>Secrets or credentials</li>
+              <li>Training data</li>
+            </ul>
+          </div>
+          <div class="boundary-panel use">
+            <div class="boundary-k">Used for a first sprint</div>
+            <ul class="boundary-list">
+              <li>Workflow description</li>
+              <li>Redacted claim export</li>
+              <li>Matching system-of-record sample</li>
+              <li>Source-of-truth rule</li>
+              <li>Deleted by default</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="section-head faq-head">
@@ -994,27 +1067,33 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         <h2>Questions buyers ask.</h2>
       </div>
       <div class="faq">
-        <div class="faq-item m-hide">
+        <div class="faq-item">
+          <div class="faq-label">Independence</div>
           <div class="faq-q">Isn't this just our vendor's dashboard, or something we could build ourselves?</div>
           <p class="faq-a">Neither is independent, and independence is the point. A vendor's dashboard reports what the vendor counted; your own team can reconcile it for internal use, but in a dispute the vendor contests your numbers first, and risk or compliance sign-offs are built to distrust a check run by the same side it's checking. A neutral, buyer-owned ledger both sides can reference is harder to wave away. The hard part isn't the reconciliation. It's knowing which record holds the truth, and what "actually held" means when two systems disagree, per action type and across messy systems.</p>
         </div>
-        <div class="faq-item m-hide">
+        <div class="faq-item">
+          <div class="faq-label">Scope</div>
           <div class="faq-q">Is this invoice reconciliation or AI-spend management?</div>
           <p class="faq-a">No. Veridatum checks whether a business action actually became true in your systems, not whether usage arithmetic adds up. It can inform what's payable or what to take into a renewal, but it is not invoice reconciliation or spend management.</p>
         </div>
         <div class="faq-item">
+          <div class="faq-label">Access</div>
           <div class="faq-q">Do you need access to our production systems?</div>
           <p class="faq-a">No. A sprint runs on a redacted export or scoped read-only access. The first step needs no data at all, just a description of the workflow.</p>
         </div>
-        <div class="faq-item m-hide">
+        <div class="faq-item">
+          <div class="faq-label">Messy records</div>
           <div class="faq-q">What if our logs and records are messy?</div>
           <p class="faq-a">Expected. Part of the sprint is mapping agent/vendor claims to the right source-of-truth records and noting where the join is clean and where it isn't. You get those mapping notes either way.</p>
         </div>
         <div class="faq-item">
+          <div class="faq-label">Cost</div>
           <div class="faq-q">How much does a design-partner sprint cost?</div>
           <p class="faq-a">Design-partner terms are deliberately light, and scoped to the workflow and the decision attached to it. We'll quote it on a short call once we've confirmed the workflow is a fit.</p>
         </div>
         <div class="faq-item">
+          <div class="faq-label">Starting point</div>
           <div class="faq-q">What do you need from us to start?</div>
           <p class="faq-a">One workflow where an agent changes backend state, a redacted sample of the agent's claims and the matching records, and a named decision the result would inform. That's it to begin.</p>
         </div>

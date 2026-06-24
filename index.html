@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Veridatum: Verify what AI agents actually did</title>
-<meta name="description" content="Veridatum compares AI-agent claims with your systems of record, so teams can separate vendor-reported success from business reality.">
+<meta name="description" content="Start with refunds, credits, or cancellations. Veridatum checks agent/vendor claims against your systems of record, then shows what held, failed, or needs review.">
 
 <!-- Canonical + social preview (Open Graph / Twitter) -->
 <link rel="canonical" href="https://veridatum.io/">
@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Veridatum">
 <meta property="og:url" content="https://veridatum.io/">
 <meta property="og:title" content="Veridatum: Verify what AI agents actually did">
-<meta property="og:description" content="Veridatum compares AI-agent claims with your systems of record, so teams can separate vendor-reported success from business reality.">
+<meta property="og:description" content="Start with refunds, credits, or cancellations. Veridatum checks agent/vendor claims against your systems of record, then shows what held, failed, or needs review.">
 <meta property="og:image" content="https://veridatum.io/og-image.png?v=1">
 <meta property="og:image:secure_url" content="https://veridatum.io/og-image.png?v=1">
 <meta property="og:image:type" content="image/png">
@@ -21,7 +21,7 @@
 <meta property="og:image:alt" content="Veridatum: the independent verification layer. Claimed action to system-of-record proof to hold or failure to accept, dispute, or escalate.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Veridatum: Verify what AI agents actually did">
-<meta name="twitter:description" content="Veridatum compares AI-agent claims with your systems of record, so teams can separate vendor-reported success from business reality.">
+<meta name="twitter:description" content="Start with refunds, credits, or cancellations. Veridatum checks agent/vendor claims against your systems of record, then shows what held, failed, or needs review.">
 <meta name="twitter:image" content="https://veridatum.io/og-image.png?v=1">
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii00NCAtNDIgODggODQiPjxjaXJjbGUgY3g9Ii05LjMzIiBjeT0iLTUuODMiIHI9IjI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNDODg2MUUiIHN0cm9rZS13aWR0aD0iNC4yIiBvcGFjaXR5PSIwLjk1Ii8+PGNpcmNsZSBjeD0iOS4zMyIgY3k9IjUuODMiIHI9IjI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMxRjZGQjAiIHN0cm9rZS13aWR0aD0iNC4yIiBvcGFjaXR5PSIwLjk1Ii8+PHBhdGggZD0iTTEyLjQ4LC0xOS45OCBBMjYsMjYgMCAwIDEgLTEyLjQ4LDE5Ljk4IEEyNiwyNiAwIDAgMSAxMi40OCwtMTkuOTggWiIgZmlsbD0iIzJFOUU2RSIgZmlsbC1vcGFjaXR5PSIxIiBzdHJva2U9IiMyRTlFNkUiIHN0cm9rZS13aWR0aD0iNC40MCIvPjwvc3ZnPg==">
@@ -483,6 +483,10 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 }
 .ev-delta b{color:var(--warm-deep);font-weight:600}
 .ev-src{font-family:var(--mono);font-size:.74rem;color:var(--faint);margin-top:.9rem;letter-spacing:.02em}
+.demo-proof-mobile{display:none;margin-top:1rem;background:var(--card);border:1px solid var(--line-2);border-radius:16px;padding:1.15rem 1.2rem;box-shadow:var(--shadow-sm)}
+.demo-proof-mobile .proof-label{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--proof);margin-bottom:.55rem}
+.demo-proof-mobile p{color:var(--ink-2);font-size:.94rem;line-height:1.55}
+.demo-proof-mobile .proof-status{display:inline-flex;margin-top:.8rem;font-family:var(--mono);font-size:.74rem;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(200,134,30,.3);border-radius:999px;padding:.32rem .72rem}
 
 /* ---------- sprint flow (real, typed sequence) ---------- */
 .sp-flow-label{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin:2.1rem 0 1rem}
@@ -574,6 +578,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   .mech-mobile .mm-chip.k-warn{color:var(--amber);background:var(--amber-soft);border-color:rgba(200,134,30,.3)}
   .mech-mobile .mm-chip.k-fail{color:var(--red);background:var(--red-soft);border-color:rgba(154,99,18,.3)}
   .mech-mobile .mm-link{display:flex;justify-content:center;padding:.7rem 0}
+  .demo-proof-mobile{display:block}
 
   /* ledger: horizontal-scroll table -> stacked, fully-readable cards */
   .ledger-wrap{overflow-x:visible}
@@ -635,9 +640,9 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
       <div class="hero-content">
         <span class="eyebrow">AI action verification</span>
         <h1 id="hero-title">Verify what AI agents actually did.</h1>
-        <p class="sub">Veridatum compares AI-agent claims with your systems of record, so teams can separate vendor-reported success from business reality.</p>
+        <p class="sub">Start with refunds, credits, or cancellations. Veridatum checks agent/vendor claims against your systems of record, then shows what held, failed, or needs review.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="#sprint">Apply for a design-partner slot <span class="arw">→</span></a>
+          <a class="btn btn-primary" href="#sprint">Apply for a design-partner sprint <span class="arw">→</span></a>
           <a class="btn btn-secondary" href="#explain">See how it works</a>
         </div>
         <div class="trust-strip">
@@ -716,7 +721,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
       <div class="section-head">
         <span class="eyebrow">Verified action ledger</span>
         <h2>Every claim, its proof, and a verdict.</h2>
-        <p class="section-sub">The output is an evidence-backed ledger: the claimed action, the proof from your system of record, whether it held, our verification status, and the decision. Refunds, credits, cancellations, and billing-state changes are useful first workflows. The artifact covers any backend state an agent can change.</p>
+        <p class="section-sub">The first sprint focuses on one state-changing support workflow, usually refunds, credits, cancellations, order changes, or entitlement changes. The output is a buyer-readable ledger of what held, what failed, and what should be accepted, disputed, escalated, or excluded.</p>
       </div>
       <div class="ledger-shell">
         <div class="ledger-top">
@@ -747,8 +752,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
                 <td class="l-action" data-label="Claimed action">Duplicate refund requested</td>
                 <td class="l-proof" data-label="Proof">Already refunded once</td>
                 <td class="l-hold" data-label="Hold">No change</td>
-                <td data-label="Status"><span class="tag tag-skip">Excluded</span></td>
-                <td data-label="Decision"><span class="dec dec-exclude">Good restraint</span></td>
+                <td data-label="Status"><span class="tag tag-skip">Verified restraint</span></td>
+                <td data-label="Decision"><span class="dec dec-exclude">Accept</span></td>
               </tr>
               <tr class="r-ok">
                 <td class="l-action" data-label="Claimed action">Order address changed</td>
@@ -784,7 +789,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
       <div class="section-head">
         <span class="eyebrow">Design-partner program</span>
         <h2>Bring one workflow. Leave with a verified ledger.</h2>
-        <p class="section-sub">Veridatum is early. We're taking three design partners to run a Verified Action Sprint on one real workflow, and limiting the program so each sprint can directly shape the method. You bring a redacted sample and a short debrief. You get the kind of buyer-readable ledger previewed above, direct input into the method, and design-partner terms.</p>
+        <p class="section-sub">Veridatum is early. We're opening a small design-partner cohort for teams with one AI-agent workflow to verify. You bring a redacted sample and a short debrief. You get the kind of buyer-readable ledger previewed above, direct input into the method, and design-partner terms.</p>
       </div>
       <p class="sp-flow-label">How a sprint runs</p>
       <ol class="sp-flow">
@@ -797,7 +802,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         <summary>See what a sprint involves <span class="chev">→</span></summary>
       <div class="sprint">
         <div class="sprint-main">
-          <div class="meta">1–2 WEEKS · ONE WORKFLOW · 3 SLOTS</div>
+          <div class="meta">1–2 WEEKS · ONE WORKFLOW · SMALL COHORT</div>
           <h3>The Verified Action Sprint.</h3>
           <p>Start from a redacted export or a scoped read-only sample, as small as a few dozen actions. Leave with a verified action ledger showing what the agent claimed, what your system of record shows, whether it held, and what should be accepted, disputed, escalated, or excluded.</p>
 
@@ -824,7 +829,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
           <div>
             <div class="tp-eye">How we start</div>
             <h4>A verification layer, not another agent.</h4>
-            <p class="tp-sub">Veridatum begins outside your production path. No write access is needed to start, and the first step needs no data at all, just a description of the workflow.</p>
+            <p class="tp-sub">For the first sprint, Veridatum starts outside your production path: export-first or scoped read-only, no write access, no live customer replies.</p>
           </div>
           <ul class="trust-list">
             <li><span class="tk"></span>Read-only or export-first</li>
@@ -832,7 +837,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
             <li><span class="tk"></span>No production writes</li>
             <li><span class="tk"></span>No live customer replies</li>
           </ul>
-          <a class="btn btn-primary tp-cta" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Apply for a slot: describe a workflow <span class="arw">→</span></a>
+          <a class="btn btn-primary tp-cta" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Apply for a sprint: describe a workflow <span class="arw">→</span></a>
         </aside>
       </div>
       </details>
@@ -844,8 +849,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">Public method demos</span>
-        <h2>On public benchmarks, Veridatum caught what a dashboard would miss.</h2>
-        <p class="section-sub">We ran the same claim-vs-record verification over public, MIT-licensed agent benchmarks: their task specs, sandbox databases, and result traces. We have no production customers yet; the findings below are our own analysis of that public data.</p>
+        <h2>On public benchmarks, Veridatum caught what dashboards can miss.</h2>
+        <p class="section-sub">These examples demonstrate the verification method. They do not claim production customer results, buyer demand, or real-world error rates. The next proof point has to be buyer-authorized data.</p>
       </div>
 
       <div class="evidence">
@@ -862,6 +867,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
           <p class="ev-delta"><svg class="conv-glyph" aria-hidden="true" focusable="false" style="margin-top:1px"><use href="#conv-mark"/></svg><span><b>26% didn't match.</b> Across 456 GPT-4.1 retail simulations, 118 disagreed with the database on final state. That's the gap a vendor dashboard wouldn't surface on its own.</span></p>
           <div class="ev-src">Veridatum analysis · public MIT-licensed benchmark · not real customer data</div>
         </div>
+      </div>
+
+      <div class="demo-proof-mobile" aria-label="Mobile public benchmark proof example">
+        <div class="proof-label">Public method demo · τ-bench retail</div>
+        <p>Agent promised a refund. The record showed the wrong order was cancelled. Final database check failed.</p>
+        <span class="proof-status">Status: disputed</span>
       </div>
 
       <div class="ledger-shell demo-ledger m-hide">
@@ -893,7 +904,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
                 <td class="l-action">Second courtesy refund requested</td>
                 <td class="l-proof">Already refunded; no mutation performed</td>
                 <td class="l-hold">No change</td>
-                <td><span class="tag tag-skip">Excluded</span></td>
+                <td><span class="tag tag-skip">Verified restraint</span></td>
                 <td class="l-proof">STATE-Bench · 134</td>
               </tr>
             </tbody>
@@ -924,7 +935,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
       <div class="section-head">
         <span class="eyebrow">Who it's for</span>
         <h2>For teams letting AI agents change business state.</h2>
-        <p class="section-sub">When an agent can move money, close accounts, or change entitlements, someone has to confirm it actually happened, before you trust it, pay for it, or take it into a vendor renewal.</p>
+        <p class="section-sub">When an agent can move money, close accounts, or change entitlements, someone has to confirm it actually happened. Veridatum gives buyers source-cited evidence for contested AI-agent outcomes: what held, what failed, what should be paid, and what needs review.</p>
       </div>
       <div class="audience">
         <div class="aud-col m-hide">
@@ -970,11 +981,11 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         <p class="section-sub">Verification means looking at sensitive records, so the handling matters as much as the method. Here is how a sprint is scoped.</p>
       </div>
       <div class="data-grid">
-        <div class="data-card"><div class="dc-k">Read-only, export-first</div><p>We start from a redacted export or scoped read-only access. No write access, ever, to begin.</p></div>
+        <div class="data-card"><div class="dc-k">First sprint only</div><p>For the first sprint, we start outside your production path: export-first or scoped read-only, no write access, no live customer replies.</p></div>
         <div class="data-card m-hide"><div class="dc-k">One workflow at a time</div><p>A sprint covers a single workflow and a small sample, often a few dozen actions, not your whole database.</p></div>
         <div class="data-card m-hide"><div class="dc-k">Minimised and redacted</div><p>We ask for the smallest sample that proves the method, with identifiers redacted wherever the verification doesn't need them.</p></div>
         <div class="data-card"><div class="dc-k">Not used to train anything</div><p>Your data is used to produce your ledger and nothing else. It is never used to train models.</p></div>
-        <div class="data-card"><div class="dc-k">Deleted on request</div><p>Sample data is kept only for the sprint and deleted afterwards on request. An NDA before anything is shared is fine.</p></div>
+        <div class="data-card"><div class="dc-k">Deleted by default</div><p>Sample data is deleted after the sprint by default, unless we agree otherwise. An NDA before anything is shared is fine.</p></div>
         <div class="data-card"><div class="dc-k">No production path</div><p>Veridatum sits entirely outside your live systems, with no production writes and no live replies to your customers.</p></div>
       </div>
 
@@ -1001,7 +1012,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
         </div>
         <div class="faq-item">
           <div class="faq-q">How much does a design-partner sprint cost?</div>
-          <p class="faq-a">Design-partner terms are deliberately light, and scoped to the workflow and the decision attached to it. We'll quote it on a short call once we've confirmed the workflow is a fit. There are three slots.</p>
+          <p class="faq-a">Design-partner terms are deliberately light, and scoped to the workflow and the decision attached to it. We'll quote it on a short call once we've confirmed the workflow is a fit.</p>
         </div>
         <div class="faq-item">
           <div class="faq-q">What do you need from us to start?</div>
@@ -1045,10 +1056,10 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 
   <!-- FINAL CTA -->
   <section class="final">
-    <span class="eyebrow">Three slots open</span>
+    <span class="eyebrow">Small design-partner cohort</span>
     <h2>Start with one workflow.</h2>
-    <p>Pick one AI-agent workflow where reported success needs checking against business reality. No data or credentials to start: just a description, and we'll tell you what evidence would verify it.</p>
-    <a class="email-btn" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Describe a workflow <span class="arw">→</span></a>
+    <p>We're opening a small design-partner cohort for teams with one AI-agent workflow to verify. No data or credentials to start: just a description, and we'll tell you what evidence would verify it.</p>
+    <a class="email-btn" href="mailto:hello@veridatum.io?subject=Veridatum%20design%20partner%3A%20%5Byour%20company%5D&body=Hi%20Veridatum%2C%0A%0A%28No%20data%20or%20credentials%20needed%20yet%2C%20just%20a%20description.%29%0A%0AThe%20workflow%20I%27d%20want%20verified%3A%0A%0AThe%20AI%20agent%20or%20vendor%20involved%3A%0A%0AThe%20system%20of%20record%20where%20the%20truth%20lives%3A%0A%0AThe%20decision%20or%20exposure%20attached%3A%0A%0A">Apply for a design-partner sprint <span class="arw">→</span></a>
     <p class="final-mail">or email <a href="mailto:hello@veridatum.io?subject=Veridatum%20enquiry">hello@veridatum.io</a></p>
   </section>
 

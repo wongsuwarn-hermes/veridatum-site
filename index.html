@@ -252,10 +252,10 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 .c-rep{position:absolute;top:11px;right:13px;font-family:var(--mono);font-size:.66rem;letter-spacing:.02em;color:var(--warm-deep);opacity:.85;white-space:nowrap}
 /* mechanic: node 'checking' -> resolve, connector draw */
 .node .chip{transition:color .3s ease,border-color .3s ease,background-color .3s ease}
-.node .chip .pulse{display:inline-block;width:6px;height:6px;border-radius:999px;background:var(--muted);animation:mPulse 1s ease-in-out infinite}
+.node .chip .node-mark{width:15px;height:15px;flex:0 0 auto;display:block;animation:mmSpin 1.6s linear infinite;transform-origin:center}
 .node .line{transform-origin:top center;transform:scaleY(0);transition:transform .45s ease}
 .node.show .line{transform:scaleY(1)}
-@keyframes mPulse{0%,100%{opacity:.3;transform:scale(.75)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes mmSpin{to{transform:rotate(360deg)}}
 /* mechanic: record 'checking' -> verdict reveal + catch flash on mismatch */
 .cell.record{transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1),background-color .45s ease,border-color .45s ease}
 .cell.record .c-title{transition:color .45s ease}
@@ -273,7 +273,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 .node .line{position:absolute;top:0;bottom:0;width:1.5px;background:var(--line-2)}
 .node .chip{
   position:relative;z-index:2;display:flex;align-items:center;justify-content:center;
-  min-width:22px;height:22px;padding:0 7px;border-radius:999px;
+  min-width:26px;height:26px;padding:0 6px;border-radius:999px;
   font-family:var(--mono);font-size:.74rem;font-weight:500;background:var(--paper);
   border:1px solid var(--line-2);color:var(--muted);white-space:nowrap;
 }
@@ -570,7 +570,6 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
     border:1px solid var(--line-2);border-radius:999px;padding:.28rem .8rem;display:inline-flex;align-items:center;gap:.4rem}
   .mech-mobile .mm-mark{width:14px;height:14px;flex:0 0 auto;display:block}
   .mech-mobile .mm-chip:not(.k-ok):not(.k-warn):not(.k-fail) .mm-mark{animation:mmSpin 1.6s linear infinite}
-  @keyframes mmSpin{to{transform:rotate(360deg)}}
   .mech-mobile .mm-chip.k-ok{color:var(--proof);background:var(--proof-soft);border-color:rgba(31,122,85,.3)}
   .mech-mobile .mm-chip.k-warn{color:var(--amber);background:var(--amber-soft);border-color:rgba(200,134,30,.3)}
   .mech-mobile .mm-chip.k-fail{color:var(--red);background:var(--red-soft);border-color:rgba(154,99,18,.3)}
@@ -1081,6 +1080,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   var perSet = window.matchMedia('(max-width:820px)').matches ? 2
              : window.matchMedia('(max-width:1140px)').matches ? 3 : 4;
   var setIdx = 0;
+  var markSvg = '<svg class="node-mark" viewBox="-44 -42 88 84" aria-hidden="true" focusable="false"><circle cx="-9.33" cy="-5.83" r="26" fill="none" stroke="#C8861E" stroke-width="6" opacity="0.95"/><circle cx="9.33" cy="5.83" r="26" fill="none" stroke="#1F6FB0" stroke-width="6" opacity="0.95"/><path d="M12.48,-19.98 A26,26 0 0 1 -12.48,19.98 A26,26 0 0 1 12.48,-19.98 Z" fill="#B8E0CE" fill-opacity="0.4" stroke="#2E9E6E" stroke-width="6.4"/></svg>';
 
   function clearRows(){
     [vendorRow, recordRow, nodeRow].forEach(function(row){
@@ -1089,8 +1089,9 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
   }
 
   function resolve(nd,rc,p){
+    var chip = nd.querySelector('.chip');
     nd.classList.add('n-'+p.r.k);
-    nd.querySelector('.chip').textContent = p.chip;
+    if(chip){ chip.removeAttribute('aria-label'); chip.textContent = p.chip; }
     rc.classList.add('v-'+p.r.k);
     if(p.r.k!=='ok'){ rc.classList.add('reveal'); }
   }
@@ -1107,7 +1108,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.018em}
 
       var nd = document.createElement('div');
       nd.className = 'node';
-      nd.innerHTML = '<span class="line"></span><span class="chip"><span class="pulse"></span></span>';
+      nd.innerHTML = '<span class="line"></span><span class="chip" aria-label="Checking system of record">'+markSvg+'</span>';
       nodeRow.appendChild(nd);
 
       var rc = document.createElement('div');
